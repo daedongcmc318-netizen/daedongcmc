@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, Zap, Clock, AlertTriangle, TrendingUp, Cpu, Battery } from 'lucide-react';
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const BatteryDashboard = () => {
   const [time, setTime] = useState(new Date());
@@ -30,7 +30,7 @@ const BatteryDashboard = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // 실시간 차트 데이터 생성
+  // 실시간 차트 데이터
   const [chartData, setChartData] = useState([]);
   
   useEffect(() => {
@@ -50,7 +50,7 @@ const BatteryDashboard = () => {
 
   // AI 예측 수명 데이터
   const lifeCurveData = Array.from({ length: 12 }, (_, i) => ({
-    month: `${i + 1}월`,
+    month: `${i + 1}`,
     predicted: 100 - (i * 8) - Math.random() * 5,
     actual: 100 - (i * 7) - Math.random() * 3,
   }));
@@ -85,116 +85,195 @@ const BatteryDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const getStatusColor = (value, min, max) => {
-    if (value < min) return 'text-red-400';
-    if (value > max) return 'text-yellow-400';
-    return 'text-neon-green';
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 p-6">
+    <div style={{ 
+      minHeight: '100vh', 
+      background: 'linear-gradient(to bottom right, #0a1628, #0f1f3a, #0a1628)',
+      padding: '24px'
+    }}>
       {/* Header */}
-      <header className="mb-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <Cpu className="w-10 h-10 text-cyan-400 animate-pulse-slow" />
-              <div>
-                <h1 className="text-3xl font-bold neon-text">B-Nexus AI</h1>
-                <p className="text-gray-400 text-sm">Battery Intelligence Platform</p>
-              </div>
+      <header style={{ marginBottom: '32px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Cpu size={40} style={{ color: '#00ffcc' }} />
+            <div>
+              <h1 style={{ 
+                fontSize: '32px', 
+                fontWeight: 'bold', 
+                background: 'linear-gradient(to right, #00ffcc, #00ff88)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                marginBottom: '4px'
+              }}>
+                B-Nexus AI
+              </h1>
+              <p style={{ color: '#9ca3af', fontSize: '14px' }}>Battery Intelligence Platform</p>
             </div>
-            <div className="flex items-center space-x-2 ml-8">
-              <div className="status-indicator bg-neon-green"></div>
-              <span className="text-neon-green text-sm font-medium">실시간 데이터 수신 중</span>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              marginLeft: '32px',
+              padding: '8px 16px',
+              background: 'rgba(0, 255, 204, 0.1)',
+              borderRadius: '8px'
+            }}>
+              <div style={{ 
+                width: '12px', 
+                height: '12px', 
+                borderRadius: '50%', 
+                background: '#00ff88',
+                animation: 'pulse 2s ease-in-out infinite'
+              }}></div>
+              <span style={{ color: '#00ff88', fontSize: '14px', fontWeight: '500' }}>
+                실시간 데이터 수신 중
+              </span>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-gray-400 text-sm">시스템 가동 시간</p>
-            <p className="text-xl font-mono text-cyan-400">{time.toLocaleTimeString('ko-KR')}</p>
+          <div style={{ textAlign: 'right' }}>
+            <p style={{ color: '#9ca3af', fontSize: '14px' }}>시스템 가동 시간</p>
+            <p style={{ color: '#00ffcc', fontSize: '20px', fontFamily: 'monospace', fontWeight: '600' }}>
+              {time.toLocaleTimeString('ko-KR')}
+            </p>
           </div>
         </div>
       </header>
 
       {/* 핵심 지표 카드 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(3, 1fr)', 
+        gap: '24px',
+        marginBottom: '32px'
+      }}>
         {/* SOH Card */}
-        <div className="metric-card animate-glow">
-          <div className="flex items-start justify-between mb-4">
+        <div style={{
+          background: '#0f1f3a',
+          borderRadius: '16px',
+          padding: '24px',
+          border: '1px solid rgba(0, 255, 204, 0.3)',
+          boxShadow: '0 0 20px rgba(0, 255, 204, 0.2)',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
             <div>
-              <p className="text-gray-400 text-sm mb-1">State of Health</p>
-              <h3 className="text-5xl font-bold text-neon-green">{liveData.soh.toFixed(1)}%</h3>
+              <p style={{ color: '#9ca3af', fontSize: '14px', marginBottom: '8px' }}>State of Health</p>
+              <h3 style={{ fontSize: '48px', fontWeight: 'bold', color: '#00ff88' }}>
+                {liveData.soh.toFixed(1)}%
+              </h3>
             </div>
-            <Battery className="w-12 h-12 text-neon-green" />
+            <Battery size={48} style={{ color: '#00ff88' }} />
           </div>
-          <div className="mt-4 pt-4 border-t border-navy-700">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-400">배터리 건강도</span>
-              <span className="text-neon-green">● 정상</span>
+          <div style={{ 
+            marginTop: '16px', 
+            paddingTop: '16px', 
+            borderTop: '1px solid #1a2942' 
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
+              <span style={{ color: '#9ca3af' }}>배터리 건강도</span>
+              <span style={{ color: '#00ff88' }}>● 정상</span>
             </div>
           </div>
         </div>
 
         {/* SOC Card */}
-        <div className="metric-card animate-glow">
-          <div className="flex items-start justify-between mb-4">
+        <div style={{
+          background: '#0f1f3a',
+          borderRadius: '16px',
+          padding: '24px',
+          border: '1px solid rgba(0, 255, 204, 0.3)',
+          boxShadow: '0 0 20px rgba(0, 255, 204, 0.2)',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
             <div>
-              <p className="text-gray-400 text-sm mb-1">State of Charge</p>
-              <h3 className="text-5xl font-bold text-cyan-400">{liveData.soc.toFixed(1)}%</h3>
+              <p style={{ color: '#9ca3af', fontSize: '14px', marginBottom: '8px' }}>State of Charge</p>
+              <h3 style={{ fontSize: '48px', fontWeight: 'bold', color: '#00ffcc' }}>
+                {liveData.soc.toFixed(1)}%
+              </h3>
             </div>
-            <Zap className="w-12 h-12 text-cyan-400" />
+            <Zap size={48} style={{ color: '#00ffcc' }} />
           </div>
-          <div className="mt-4 pt-4 border-t border-navy-700">
-            <div className="w-full bg-navy-700 rounded-full h-2">
-              <div 
-                className="bg-gradient-to-r from-cyan-400 to-neon-green h-2 rounded-full transition-all duration-1000"
-                style={{ width: `${liveData.soc}%` }}
-              ></div>
+          <div style={{ 
+            marginTop: '16px', 
+            paddingTop: '16px', 
+            borderTop: '1px solid #1a2942' 
+          }}>
+            <div style={{ 
+              width: '100%', 
+              background: '#1a2942', 
+              borderRadius: '8px', 
+              height: '8px',
+              overflow: 'hidden'
+            }}>
+              <div style={{ 
+                width: `${liveData.soc}%`,
+                height: '100%',
+                background: 'linear-gradient(to right, #00ffcc, #00ff88)',
+                borderRadius: '8px',
+                transition: 'width 1s ease'
+              }}></div>
             </div>
-            <p className="text-gray-400 text-xs mt-2">실시간 충전 상태</p>
+            <p style={{ color: '#9ca3af', fontSize: '12px', marginTop: '8px' }}>실시간 충전 상태</p>
           </div>
         </div>
 
         {/* RUL Card */}
-        <div className="metric-card animate-glow">
-          <div className="flex items-start justify-between mb-4">
+        <div style={{
+          background: '#0f1f3a',
+          borderRadius: '16px',
+          padding: '24px',
+          border: '1px solid rgba(0, 255, 204, 0.3)',
+          boxShadow: '0 0 20px rgba(0, 255, 204, 0.2)',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
             <div>
-              <p className="text-gray-400 text-sm mb-1">Remaining Useful Life</p>
-              <h3 className="text-5xl font-bold text-neon-cyan">{Math.floor(liveData.rul)}</h3>
-              <p className="text-gray-400 text-sm">Cycles</p>
+              <p style={{ color: '#9ca3af', fontSize: '14px', marginBottom: '8px' }}>Remaining Useful Life</p>
+              <h3 style={{ fontSize: '48px', fontWeight: 'bold', color: '#00ffcc' }}>
+                {Math.floor(liveData.rul)}
+              </h3>
+              <p style={{ color: '#9ca3af', fontSize: '14px' }}>Cycles</p>
             </div>
-            <Clock className="w-12 h-12 text-neon-cyan" />
+            <Clock size={48} style={{ color: '#00ffcc' }} />
           </div>
-          <div className="mt-4 pt-4 border-t border-navy-700">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-400">AI 예측 수명</span>
-              <span className="text-cyan-400">약 {Math.floor(liveData.rul / 30)}개월</span>
+          <div style={{ 
+            marginTop: '16px', 
+            paddingTop: '16px', 
+            borderTop: '1px solid #1a2942' 
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
+              <span style={{ color: '#9ca3af' }}>AI 예측 수명</span>
+              <span style={{ color: '#00ffcc' }}>약 {Math.floor(liveData.rul / 30)}개월</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 차트 섹션 */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      {/* 차트 및 로그 섹션 */}
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', marginBottom: '32px' }}>
         {/* 실시간 모니터링 차트 */}
-        <div className="lg:col-span-2 bg-navy-800 rounded-xl p-6 border border-navy-700 glow-border">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-100 flex items-center">
-              <Activity className="w-6 h-6 mr-2 text-cyan-400" />
+        <div style={{
+          background: '#0f1f3a',
+          borderRadius: '16px',
+          padding: '24px',
+          border: '1px solid rgba(0, 255, 204, 0.3)',
+          boxShadow: '0 0 20px rgba(0, 255, 204, 0.2)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Activity size={24} style={{ color: '#00ffcc' }} />
               실시간 배터리 모니터링
             </h2>
-            <div className="flex space-x-4 text-sm">
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-yellow-400 rounded-full mr-2"></div>
-                <span className="text-gray-400">온도 (°C)</span>
+            <div style={{ display: 'flex', gap: '16px', fontSize: '14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#facc15' }}></div>
+                <span style={{ color: '#9ca3af' }}>온도 (°C)</span>
               </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-cyan-400 rounded-full mr-2"></div>
-                <span className="text-gray-400">전압 (V)</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#00ffcc' }}></div>
+                <span style={{ color: '#9ca3af' }}>전압 (V)</span>
               </div>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={280}>
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
               <XAxis dataKey="time" stroke="#64748b" style={{ fontSize: '12px' }} />
@@ -228,22 +307,22 @@ const BatteryDashboard = () => {
               />
             </LineChart>
           </ResponsiveContainer>
-          <div className="grid grid-cols-3 gap-4 mt-6">
-            <div className="bg-navy-900/50 p-3 rounded-lg">
-              <p className="text-gray-400 text-xs mb-1">현재 온도</p>
-              <p className={`text-2xl font-bold ${getStatusColor(liveData.temperature, 30, 40)}`}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginTop: '24px' }}>
+            <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '12px', borderRadius: '8px' }}>
+              <p style={{ color: '#9ca3af', fontSize: '12px', marginBottom: '4px' }}>현재 온도</p>
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#facc15' }}>
                 {liveData.temperature.toFixed(1)}°C
               </p>
             </div>
-            <div className="bg-navy-900/50 p-3 rounded-lg">
-              <p className="text-gray-400 text-xs mb-1">현재 전압</p>
-              <p className={`text-2xl font-bold ${getStatusColor(liveData.voltage, 3.6, 4.2)}`}>
+            <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '12px', borderRadius: '8px' }}>
+              <p style={{ color: '#9ca3af', fontSize: '12px', marginBottom: '4px' }}>현재 전압</p>
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#00ffcc' }}>
                 {liveData.voltage.toFixed(2)}V
               </p>
             </div>
-            <div className="bg-navy-900/50 p-3 rounded-lg">
-              <p className="text-gray-400 text-xs mb-1">현재 전류</p>
-              <p className="text-2xl font-bold text-neon-cyan">
+            <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '12px', borderRadius: '8px' }}>
+              <p style={{ color: '#9ca3af', fontSize: '12px', marginBottom: '4px' }}>현재 전류</p>
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#00ffcc' }}>
                 {liveData.current.toFixed(1)}A
               </p>
             </div>
@@ -251,29 +330,47 @@ const BatteryDashboard = () => {
         </div>
 
         {/* AI 진단 로그 */}
-        <div className="bg-navy-800 rounded-xl p-6 border border-navy-700 glow-border">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-100 flex items-center">
-              <AlertTriangle className="w-6 h-6 mr-2 text-cyan-400" />
+        <div style={{
+          background: '#0f1f3a',
+          borderRadius: '16px',
+          padding: '24px',
+          border: '1px solid rgba(0, 255, 204, 0.3)',
+          boxShadow: '0 0 20px rgba(0, 255, 204, 0.2)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <AlertTriangle size={24} style={{ color: '#00ffcc' }} />
               AI 진단 알림
             </h2>
-            <div className="status-indicator bg-cyan-400"></div>
+            <div style={{ 
+              width: '12px', 
+              height: '12px', 
+              borderRadius: '50%', 
+              background: '#00ffcc',
+              animation: 'pulse 2s ease-in-out infinite'
+            }}></div>
           </div>
-          <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
-            {aiLogs.map((log, index) => (
+          <div style={{ maxHeight: '400px', overflowY: 'auto', paddingRight: '8px' }}>
+            {aiLogs.map((log) => (
               <div 
                 key={log.id}
-                className={`ai-log-item ${
-                  log.level === 'warning' ? 'border-yellow-400' : 
-                  log.level === 'success' ? 'border-neon-green' : 
-                  'border-cyan-400'
-                } ${index === 0 ? 'animate-pulse-slow' : ''}`}
+                style={{
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  borderLeft: `4px solid ${
+                    log.level === 'warning' ? '#facc15' : 
+                    log.level === 'success' ? '#00ff88' : 
+                    '#00ffcc'
+                  }`,
+                  padding: '16px',
+                  borderRadius: '0 8px 8px 0',
+                  marginBottom: '12px',
+                }}
               >
-                <div className="flex items-start justify-between mb-2">
-                  <span className="text-2xl">{log.icon}</span>
-                  <span className="text-xs text-gray-500">{log.time}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '20px' }}>{log.icon}</span>
+                  <span style={{ fontSize: '12px', color: '#64748b' }}>{log.time}</span>
                 </div>
-                <p className="text-sm text-gray-300">{log.message}</p>
+                <p style={{ fontSize: '14px', color: '#d1d5db' }}>{log.message}</p>
               </div>
             ))}
           </div>
@@ -281,20 +378,26 @@ const BatteryDashboard = () => {
       </div>
 
       {/* AI 예측 수명 곡선 */}
-      <div className="bg-navy-800 rounded-xl p-6 border border-navy-700 glow-border">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-100 flex items-center">
-            <TrendingUp className="w-6 h-6 mr-2 text-cyan-400" />
+      <div style={{
+        background: '#0f1f3a',
+        borderRadius: '16px',
+        padding: '24px',
+        border: '1px solid rgba(0, 255, 204, 0.3)',
+        boxShadow: '0 0 20px rgba(0, 255, 204, 0.2)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <TrendingUp size={24} style={{ color: '#00ffcc' }} />
             AI 예측 수명 곡선 (Expected Life Curve)
           </h2>
-          <div className="flex space-x-4 text-sm">
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-cyan-400 rounded-full mr-2"></div>
-              <span className="text-gray-400">AI 예측</span>
+          <div style={{ display: 'flex', gap: '16px', fontSize: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#00ffcc' }}></div>
+              <span style={{ color: '#9ca3af' }}>AI 예측</span>
             </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-neon-green rounded-full mr-2"></div>
-              <span className="text-gray-400">실제 성능</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#00ff88' }}></div>
+              <span style={{ color: '#9ca3af' }}>실제 성능</span>
             </div>
           </div>
         </div>
@@ -311,8 +414,8 @@ const BatteryDashboard = () => {
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
-            <XAxis dataKey="month" stroke="#64748b" style={{ fontSize: '12px' }} />
-            <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
+            <XAxis dataKey="month" stroke="#64748b" style={{ fontSize: '12px' }} label={{ value: '월', position: 'insideRight', offset: -5, fill: '#9ca3af' }} />
+            <YAxis stroke="#64748b" style={{ fontSize: '12px' }} label={{ value: '성능 (%)', angle: -90, position: 'insideLeft', fill: '#9ca3af' }} />
             <Tooltip 
               contentStyle={{ 
                 backgroundColor: '#0f1f3a', 
@@ -342,6 +445,13 @@ const BatteryDashboard = () => {
           </AreaChart>
         </ResponsiveContainer>
       </div>
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
     </div>
   );
 };
