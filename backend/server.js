@@ -214,6 +214,6 @@ app.get('/health', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Solar@Care Backend API running on http://localhost:${PORT}`);
+  console.log(`🚀 B-Nexus AI Backend API running on http://localhost:${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
 });

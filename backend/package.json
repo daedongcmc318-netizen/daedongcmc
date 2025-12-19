@@ -1,7 +1,7 @@
 {
-  "name": "solarcare-backend",
+  "name": "bnexus-ai-backend",
   "version": "1.0.0",
-  "description": "Solar@Care Backend API Server",
+  "description": "B-Nexus AI Backend API Server",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

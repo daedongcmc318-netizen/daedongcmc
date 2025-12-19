@@ -28,15 +28,14 @@
 
 .logo-text {
   color: white;
+  font-weight: 700;
 }
 
-.logo-at {
-  color: #ffcc00;
-  font-size: 28px;
-}
-
-.logo-care {
-  color: white;
+.logo-ai {
+  color: #00ffcc;
+  font-size: 24px;
+  font-weight: 700;
+  margin-left: 4px;
 }
 
 .search-box {

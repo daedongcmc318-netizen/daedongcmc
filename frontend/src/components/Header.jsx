@@ -15,9 +15,8 @@ const Header = () => {
     <header className="header">
       <div className="header-left">
         <div className="logo">
-          <span className="logo-text">solar</span>
-          <span className="logo-at">@</span>
-          <span className="logo-care">care</span>
+          <span className="logo-text">B-Nexus</span>
+          <span className="logo-ai">AI</span>
         </div>
         <div className="search-box">
           <Search size={20} />
