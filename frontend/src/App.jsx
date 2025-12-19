@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import BatteryDashboard from './pages/BatteryDashboard';
 import Dashboard from './pages/Dashboard';
 import PowerPlantDetail from './pages/PowerPlantDetail';
 import Header from './components/Header';
@@ -12,17 +13,35 @@ function App() {
   return (
     <Router>
       <div className="app-container">
-        <Header />
-        <div className="main-layout">
-          <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
-          <main className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-            <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/powerplant/:id" element={<PowerPlantDetail />} />
-            </Routes>
-          </main>
-        </div>
+        <Routes>
+          {/* AI Battery Dashboard - 새로운 메인 대시보드 */}
+          <Route path="/" element={<BatteryDashboard />} />
+          <Route path="/battery" element={<BatteryDashboard />} />
+          
+          {/* Solar Power Plant Dashboard - 기존 대시보드 */}
+          <Route path="/solar" element={
+            <>
+              <Header />
+              <div className="main-layout">
+                <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
+                <main className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+                  <Dashboard />
+                </main>
+              </div>
+            </>
+          } />
+          <Route path="/powerplant/:id" element={
+            <>
+              <Header />
+              <div className="main-layout">
+                <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
+                <main className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+                  <PowerPlantDetail />
+                </main>
+              </div>
+            </>
+          } />
+        </Routes>
       </div>
     </Router>
   );
