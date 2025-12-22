@@ -660,74 +660,215 @@ const BatteryDashboard = () => {
       </div>
 
       {/* 새로운 디테일 섹션 1: 전력 흐름 & 셀 밸런싱 - Responsive */}
-      <div className="power-balance-section" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px', marginBottom: '16px' }}>
+      <div className="power-balance-section" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px', marginBottom: '16px' }}>
         {/* 실시간 전력 흐름 */}
         <div style={{
           background: '#0f1f3a',
           borderRadius: '12px',
-          padding: '16px',
+          padding: '20px',
           border: '1px solid rgba(0, 255, 204, 0.3)',
         }}>
-          <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Waves size={18} style={{ color: '#00ffcc' }} />
             실시간 전력 흐름
           </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          <div className="power-flow-container" style={{ 
+            display: 'flex', 
+            flexDirection: 'row', 
+            alignItems: 'center', 
+            justifyContent: 'space-around',
+            gap: '20px',
+            minHeight: '280px'
+          }}>
             {/* Grid */}
-            <div style={{ 
-              width: '100%', 
-              maxWidth: '300px',
-              padding: '12px', 
-              background: 'rgba(0, 0, 0, 0.3)', 
-              borderRadius: '8px',
-              textAlign: 'center'
+            <div className="power-node" style={{ 
+              flex: '0 0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '8px'
             }}>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)', marginBottom: '4px' }}>Grid</p>
-              <p style={{ color: '#00ffcc', fontSize: 'clamp(18px, 4vw, 24px)', fontWeight: 'bold' }}>{powerFlow.grid_power.toFixed(1)} kW</p>
-            </div>
-            
-            {/* 화살표와 ESS */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
-              {powerFlow.mode === 'charging' && (
-                <ArrowDownCircle size={28} style={{ color: '#00ff88', animation: 'pulse 1.5s ease-in-out infinite' }} />
-              )}
-              {powerFlow.mode === 'discharging' && (
-                <ArrowUpCircle size={28} style={{ color: '#ff6b9d', animation: 'pulse 1.5s ease-in-out infinite' }} />
-              )}
-              <div style={{ 
-                padding: '20px', 
-                background: 'linear-gradient(135deg, rgba(0, 255, 204, 0.2), rgba(0, 255, 136, 0.2))',
-                borderRadius: '12px',
+              <div style={{
+                width: '80px',
+                height: '80px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, rgba(0, 255, 204, 0.2), rgba(0, 255, 204, 0.05))',
                 border: '2px solid #00ffcc',
-                textAlign: 'center'
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 20px rgba(0, 255, 204, 0.3)',
+                position: 'relative'
               }}>
-                <Battery size={32} style={{ color: '#00ffcc', marginBottom: '6px' }} />
-                <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 11px)' }}>ESS Battery</p>
-                <p style={{ 
-                  color: powerFlow.mode === 'charging' ? '#00ff88' : powerFlow.mode === 'discharging' ? '#ff6b9d' : '#facc15', 
-                  fontSize: 'clamp(13px, 2.8vw, 16px)', 
-                  fontWeight: 'bold',
-                  marginTop: '4px'
-                }}>
-                  {powerFlow.mode === 'charging' ? '충전 중' : powerFlow.mode === 'discharging' ? '방전 중' : '대기'}
-                </p>
-                <p style={{ color: '#00ffcc', fontSize: 'clamp(16px, 3.5vw, 20px)', fontWeight: 'bold', marginTop: '4px' }}>
-                  {powerFlow.rate.toFixed(1)} kW
+                <Grid size={36} style={{ color: '#00ffcc' }} />
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)', marginBottom: '4px' }}>Grid</p>
+                <p style={{ color: '#00ffcc', fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 'bold' }}>
+                  {powerFlow.grid_power.toFixed(1)} kW
                 </p>
               </div>
             </div>
             
-            {/* Load */}
-            <div style={{ 
-              width: '100%', 
-              maxWidth: '300px',
-              padding: '12px', 
-              background: 'rgba(0, 0, 0, 0.3)', 
-              borderRadius: '8px',
-              textAlign: 'center'
+            {/* 화살표 */}
+            <div className="power-arrow" style={{ 
+              flex: '0 0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '8px'
             }}>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)', marginBottom: '4px' }}>Load</p>
-              <p style={{ color: '#ff6b9d', fontSize: 'clamp(18px, 4vw, 24px)', fontWeight: 'bold' }}>{powerFlow.load_power.toFixed(1)} kW</p>
+              {powerFlow.mode === 'charging' && (
+                <>
+                  <ArrowDownCircle size={32} style={{ color: '#00ff88', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  <span style={{ 
+                    color: '#00ff88', 
+                    fontSize: 'clamp(10px, 2vw, 12px)', 
+                    fontWeight: '600',
+                    background: 'rgba(0, 255, 136, 0.1)',
+                    padding: '4px 8px',
+                    borderRadius: '4px'
+                  }}>
+                    충전 중
+                  </span>
+                </>
+              )}
+              {powerFlow.mode === 'discharging' && (
+                <>
+                  <ArrowUpCircle size={32} style={{ color: '#ff6b9d', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  <span style={{ 
+                    color: '#ff6b9d', 
+                    fontSize: 'clamp(10px, 2vw, 12px)', 
+                    fontWeight: '600',
+                    background: 'rgba(255, 107, 157, 0.1)',
+                    padding: '4px 8px',
+                    borderRadius: '4px'
+                  }}>
+                    방전 중
+                  </span>
+                </>
+              )}
+              {powerFlow.mode === 'idle' && (
+                <>
+                  <Activity size={32} style={{ color: '#facc15', animation: 'pulse 2s ease-in-out infinite' }} />
+                  <span style={{ 
+                    color: '#facc15', 
+                    fontSize: 'clamp(10px, 2vw, 12px)', 
+                    fontWeight: '600',
+                    background: 'rgba(250, 204, 21, 0.1)',
+                    padding: '4px 8px',
+                    borderRadius: '4px'
+                  }}>
+                    대기
+                  </span>
+                </>
+              )}
+            </div>
+
+            {/* ESS Battery */}
+            <div className="power-node" style={{ 
+              flex: '0 0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <div style={{ 
+                width: '100px', 
+                height: '100px',
+                borderRadius: '16px',
+                background: 'linear-gradient(135deg, rgba(0, 255, 204, 0.2), rgba(0, 255, 136, 0.2))',
+                border: '3px solid #00ffcc',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 30px rgba(0, 255, 204, 0.4)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                {/* Battery level indicator */}
+                <div style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: `${liveData.soc}%`,
+                  background: 'linear-gradient(to top, rgba(0, 255, 204, 0.3), rgba(0, 255, 136, 0.1))',
+                  transition: 'height 1s ease'
+                }}></div>
+                <Battery size={40} style={{ color: '#00ffcc', marginBottom: '4px', position: 'relative', zIndex: 1 }} />
+                <span style={{ 
+                  color: '#00ffcc', 
+                  fontSize: 'clamp(11px, 2.2vw, 13px)', 
+                  fontWeight: 'bold',
+                  position: 'relative',
+                  zIndex: 1
+                }}>
+                  {liveData.soc.toFixed(0)}%
+                </span>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)', marginBottom: '4px' }}>ESS Battery</p>
+                <p style={{ 
+                  color: powerFlow.mode === 'charging' ? '#00ff88' : powerFlow.mode === 'discharging' ? '#ff6b9d' : '#facc15',
+                  fontSize: 'clamp(16px, 3vw, 20px)', 
+                  fontWeight: 'bold' 
+                }}>
+                  {powerFlow.rate.toFixed(1)} kW
+                </p>
+              </div>
+            </div>
+
+            {/* 화살표 2 */}
+            <div className="power-arrow" style={{ 
+              flex: '0 0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <ArrowDownCircle size={32} style={{ color: '#ff6b9d', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              <span style={{ 
+                color: '#ff6b9d', 
+                fontSize: 'clamp(10px, 2vw, 12px)', 
+                fontWeight: '600',
+                background: 'rgba(255, 107, 157, 0.1)',
+                padding: '4px 8px',
+                borderRadius: '4px'
+              }}>
+                공급
+              </span>
+            </div>
+            
+            {/* Load */}
+            <div className="power-node" style={{ 
+              flex: '0 0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <div style={{
+                width: '80px',
+                height: '80px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, rgba(255, 107, 157, 0.2), rgba(255, 107, 157, 0.05))',
+                border: '2px solid #ff6b9d',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 20px rgba(255, 107, 157, 0.3)',
+                position: 'relative'
+              }}>
+                <Zap size={36} style={{ color: '#ff6b9d' }} />
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)', marginBottom: '4px' }}>Load</p>
+                <p style={{ color: '#ff6b9d', fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 'bold' }}>
+                  {powerFlow.load_power.toFixed(1)} kW
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -1000,6 +1141,14 @@ const BatteryDashboard = () => {
           .power-balance-section {
             grid-template-columns: 1fr !important;
           }
+          .power-flow-container {
+            flex-direction: column !important;
+            gap: 12px !important;
+            min-height: auto !important;
+          }
+          .power-arrow {
+            transform: rotate(90deg);
+          }
           .param-stats {
             grid-template-columns: repeat(2, 1fr) !important;
           }
@@ -1014,6 +1163,13 @@ const BatteryDashboard = () => {
           }
           .param-stats {
             grid-template-columns: 1fr !important;
+          }
+        }
+        
+        /* 데스크톱 전력 흐름 최적화 */
+        @media (min-width: 769px) {
+          .power-balance-section {
+            grid-template-columns: 1fr 1.5fr !important;
           }
         }
       `}</style>
