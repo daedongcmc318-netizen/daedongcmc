@@ -292,8 +292,8 @@ const BatteryDashboard = () => {
       {/* 핵심 지표 카드 - Compact Design */}
       <div style={{
         background: '#0f1f3a',
-        borderRadius: '12px',
-        padding: '16px',
+        borderRadius: '10px',
+        padding: '12px',
         border: '1px solid rgba(0, 255, 204, 0.3)',
         marginBottom: '16px'
       }}>
@@ -350,7 +350,7 @@ const BatteryDashboard = () => {
       </div>
 
       {/* 메인 차트 섹션 - Responsive */}
-      <div className="main-charts" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px', marginBottom: '16px' }}>
+      <div className="main-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '12px', marginBottom: '12px' }}>
         {/* 실시간 4파라미터 모니터링 */}
         <div style={{
           background: '#0f1f3a',
@@ -362,7 +362,7 @@ const BatteryDashboard = () => {
             <Activity size={18} style={{ color: '#00ffcc' }} />
             실시간 ESS 파라미터 모니터링
           </h2>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={150}>
             <LineChart data={realtimeData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
               <XAxis dataKey="time" stroke="#64748b" style={{ fontSize: '10px' }} />
@@ -413,7 +413,7 @@ const BatteryDashboard = () => {
             <AlertTriangle size={18} style={{ color: '#00ffcc' }} />
             ESS AI 진단
           </h2>
-          <div style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '4px' }}>
+          <div style={{ maxHeight: '150px', overflowY: 'auto', paddingRight: '4px' }}>
             {aiLogs.map((log) => (
               <div 
                 key={log.id}
@@ -446,7 +446,7 @@ const BatteryDashboard = () => {
       </div>
 
       {/* 셀 전압 분포 & 온도 분포 - Compact Grid View */}
-      <div className="distribution-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+      <div className="distribution-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px', marginBottom: '12px' }}>
         {/* 셀 전압 분포 */}
         <div style={{
           background: '#0f1f3a',
@@ -535,7 +535,7 @@ const BatteryDashboard = () => {
       </div>
 
       {/* 충방전 사이클 & AI 예측 - Responsive */}
-      <div className="cycle-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+      <div className="cycle-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px', marginBottom: '12px' }}>
         {/* 충방전 사이클 히스토리 */}
         <div style={{
           background: '#0f1f3a',
@@ -547,7 +547,7 @@ const BatteryDashboard = () => {
             <BarChart3 size={18} style={{ color: '#00ffcc' }} />
             24시간 충방전 사이클
           </h2>
-          <ResponsiveContainer width="100%" height={200}>
+          <ResponsiveContainer width="100%" height={140}>
             <BarChart data={cycleHistory}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
               <XAxis dataKey="hour" stroke="#64748b" style={{ fontSize: '9px' }} />
@@ -577,7 +577,7 @@ const BatteryDashboard = () => {
             <TrendingUp size={18} style={{ color: '#00ffcc' }} />
             AI 기반 수명 예측 곡선
           </h2>
-          <ResponsiveContainer width="100%" height={200}>
+          <ResponsiveContainer width="100%" height={140}>
             <AreaChart data={lifeCurveData}>
               <defs>
                 <linearGradient id="colorPredicted" x1="0" y1="0" x2="0" y2="1">
@@ -609,12 +609,12 @@ const BatteryDashboard = () => {
       </div>
 
       {/* 새로운 디테일 섹션 1: 전력 흐름 & 셀 밸런싱 - Responsive */}
-      <div className="power-balance-section" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+      <div className="power-balance-section" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '12px', marginBottom: '12px' }}>
         {/* 실시간 전력 흐름 */}
         <div style={{
           background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '20px',
+          borderRadius: '10px',
+          padding: '12px',
           border: '1px solid rgba(0, 255, 204, 0.3)',
         }}>
           <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -627,7 +627,7 @@ const BatteryDashboard = () => {
             alignItems: 'center', 
             justifyContent: 'space-around',
             gap: '20px',
-            minHeight: '280px'
+            minHeight: '200px'
           }}>
             {/* Grid */}
             <div className="power-node" style={{ 
@@ -833,7 +833,7 @@ const BatteryDashboard = () => {
             <Gauge size={18} style={{ color: '#00ffcc' }} />
             셀 밸런싱 상세 분석 (16 Cells)
           </h2>
-          <ResponsiveContainer width="100%" height={220}>
+          <ResponsiveContainer width="100%" height={140}>
             <ComposedChart data={cellBalancingData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
               <XAxis dataKey="cell" stroke="#64748b" style={{ fontSize: '9px' }} />
@@ -880,7 +880,7 @@ const BatteryDashboard = () => {
       </div>
 
       {/* 새로운 디테일 섹션 2: SOH/SOC 트렌드 & 에너지 효율 - Responsive */}
-      <div className="trend-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+      <div className="trend-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px', marginBottom: '12px' }}>
         {/* SOH/SOC 히스토리 트렌드 */}
         <div style={{
           background: '#0f1f3a',
@@ -892,7 +892,7 @@ const BatteryDashboard = () => {
             <TrendingUp size={18} style={{ color: '#00ffcc' }} />
             SOH/SOC 7일 트렌드 분석
           </h2>
-          <ResponsiveContainer width="100%" height={200}>
+          <ResponsiveContainer width="100%" height={140}>
             <ComposedChart data={healthTrend}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
               <XAxis dataKey="day" stroke="#64748b" style={{ fontSize: '9px' }} />
@@ -924,7 +924,7 @@ const BatteryDashboard = () => {
             <Activity size={18} style={{ color: '#facc15' }} />
             24시간 에너지 효율 분석
           </h2>
-          <ResponsiveContainer width="100%" height={200}>
+          <ResponsiveContainer width="100%" height={140}>
             <LineChart data={efficiencyTrend}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
               <XAxis dataKey="hour" stroke="#64748b" style={{ fontSize: '9px' }} />
@@ -962,8 +962,8 @@ const BatteryDashboard = () => {
       {/* 새로운 디테일 섹션 3: 셀 온도 히트맵 - Responsive */}
       <div style={{
         background: '#0f1f3a',
-        borderRadius: '12px',
-        padding: '16px',
+        borderRadius: '10px',
+        padding: '12px',
         border: '1px solid rgba(250, 204, 21, 0.3)',
         marginBottom: '16px'
       }}>
@@ -972,7 +972,7 @@ const BatteryDashboard = () => {
           배터리 셀 온도 분포 히트맵 (4x4 Grid)
         </h2>
         <div className="heatmap-container" style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
-          <ResponsiveContainer width="100%" height={280}>
+          <ResponsiveContainer width="100%" height={180}>
             <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
               <XAxis type="number" dataKey="x" domain={[-0.5, 3.5]} ticks={[0, 1, 2, 3]} stroke="#64748b" style={{ fontSize: '10px' }} />
