@@ -219,18 +219,18 @@ const BatteryDashboard = () => {
       padding: '12px',
       color: '#fff'
     }}>
-      {/* Header - Responsive */}
-      <header style={{ marginBottom: '16px' }}>
+      {/* Header - Ultra Compact */}
+      <header style={{ marginBottom: '8px' }}>
         <div className="header-container" style={{ 
           display: 'flex', 
           flexDirection: 'column',
-          gap: '12px'
+          gap: '6px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            <Battery className="battery-icon" size={32} style={{ color: '#00ffcc', flexShrink: 0 }} />
+            <Battery className="battery-icon" size={24} style={{ color: '#00ffcc', flexShrink: 0 }} />
             <div style={{ flex: '1', minWidth: '200px' }}>
               <h1 style={{ 
-                fontSize: 'clamp(20px, 5vw, 32px)', 
+                fontSize: 'clamp(16px, 4vw, 24px)', 
                 fontWeight: 'bold', 
                 background: 'linear-gradient(to right, #00ffcc, #00ff88)',
                 WebkitBackgroundClip: 'text',
@@ -240,21 +240,21 @@ const BatteryDashboard = () => {
               }}>
                 B-Nexus AI - ESS
               </h1>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(11px, 2.5vw, 14px)' }}>Energy Storage System Battery Monitoring</p>
+              <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 2vw, 11px)' }}>Energy Storage System Battery Monitoring</p>
             </div>
             <div className="status-badge" style={{ 
               display: 'flex', 
               alignItems: 'center', 
               gap: '6px', 
-              padding: '6px 12px',
+              padding: '4px 8px',
               background: 'rgba(0, 255, 204, 0.1)',
-              borderRadius: '8px',
+              borderRadius: '6px',
               border: '1px solid rgba(0, 255, 204, 0.3)',
-              fontSize: 'clamp(11px, 2.5vw, 14px)'
+              fontSize: 'clamp(9px, 2vw, 11px)'
             }}>
               <div style={{ 
-                width: '10px', 
-                height: '10px', 
+                width: '8px', 
+                height: '8px', 
                 borderRadius: '50%', 
                 background: '#00ff88',
                 animation: 'pulse 2s ease-in-out infinite',
@@ -269,19 +269,19 @@ const BatteryDashboard = () => {
             display: 'flex', 
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '8px 12px',
+            padding: '6px 8px',
             background: 'rgba(0, 0, 0, 0.3)',
-            borderRadius: '8px'
+            borderRadius: '6px'
           }}>
             <div>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)' }}>System Time</p>
-              <p style={{ color: '#00ffcc', fontSize: 'clamp(14px, 3vw, 18px)', fontFamily: 'monospace', fontWeight: '600' }}>
+              <p style={{ color: '#9ca3af', fontSize: 'clamp(8px, 1.5vw, 10px)' }}>System Time</p>
+              <p style={{ color: '#00ffcc', fontSize: 'clamp(11px, 2vw, 13px)', fontFamily: 'monospace', fontWeight: '600' }}>
                 {time.toLocaleTimeString('ko-KR')}
               </p>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)' }}>Cycle Count</p>
-              <p style={{ color: '#00ffcc', fontSize: 'clamp(14px, 3vw, 18px)', fontFamily: 'monospace', fontWeight: '600' }}>
+              <p style={{ color: '#9ca3af', fontSize: 'clamp(8px, 1.5vw, 10px)' }}>Cycle Count</p>
+              <p style={{ color: '#00ffcc', fontSize: 'clamp(11px, 2vw, 13px)', fontFamily: 'monospace', fontWeight: '600' }}>
                 {liveData.cycleCount.toLocaleString()}
               </p>
             </div>
@@ -289,85 +289,85 @@ const BatteryDashboard = () => {
         </div>
       </header>
 
-      {/* 핵심 지표 카드 - Compact Design */}
+      {/* 핵심 지표 카드 - Ultra Compact */}
       <div style={{
         background: '#0f1f3a',
-        borderRadius: '10px',
-        padding: '12px',
+        borderRadius: '8px',
+        padding: '6px',
         border: '1px solid rgba(0, 255, 204, 0.3)',
-        marginBottom: '16px'
+        marginBottom: '8px'
       }}>
         <div className="metrics-grid" style={{ 
           display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', 
-          gap: '12px'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(75px, 1fr))', 
+          gap: '6px'
         }}>
           {/* SOH */}
-          <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 255, 136, 0.05)', borderRadius: '8px', border: '1px solid rgba(0, 255, 136, 0.2)' }}>
-            <Battery size={24} style={{ color: '#00ff88', marginBottom: '4px' }} />
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)', marginBottom: '2px' }}>SOH</p>
-            <p style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 'bold', color: '#00ff88', lineHeight: '1' }}>
+          <div style={{ textAlign: 'center', padding: '5px', background: 'rgba(0, 255, 136, 0.05)', borderRadius: '6px', border: '1px solid rgba(0, 255, 136, 0.2)' }}>
+            <Battery size={16} style={{ color: '#00ff88', marginBottom: '2px' }} />
+            <p style={{ color: '#9ca3af', fontSize: 'clamp(7px, 1.2vw, 8px)', marginBottom: '1px' }}>SOH</p>
+            <p style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontWeight: 'bold', color: '#00ff88', lineHeight: '1' }}>
               {liveData.soh.toFixed(1)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>%</span>
             </p>
           </div>
 
           {/* SOC */}
-          <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 255, 204, 0.05)', borderRadius: '8px', border: '1px solid rgba(0, 255, 204, 0.2)' }}>
-            <Zap size={24} style={{ color: '#00ffcc', marginBottom: '4px' }} />
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)', marginBottom: '2px' }}>SOC</p>
-            <p style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 'bold', color: '#00ffcc', lineHeight: '1' }}>
+          <div style={{ textAlign: 'center', padding: '5px', background: 'rgba(0, 255, 204, 0.05)', borderRadius: '6px', border: '1px solid rgba(0, 255, 204, 0.2)' }}>
+            <Zap size={16} style={{ color: '#00ffcc', marginBottom: '2px' }} />
+            <p style={{ color: '#9ca3af', fontSize: 'clamp(7px, 1.2vw, 8px)', marginBottom: '1px' }}>SOC</p>
+            <p style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontWeight: 'bold', color: '#00ffcc', lineHeight: '1' }}>
               {liveData.soc.toFixed(1)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>%</span>
             </p>
           </div>
 
           {/* Power */}
-          <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 255, 204, 0.05)', borderRadius: '8px', border: '1px solid rgba(0, 255, 204, 0.2)' }}>
-            <Activity size={24} style={{ color: '#00ffcc', marginBottom: '4px' }} />
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)', marginBottom: '2px' }}>Power</p>
-            <p style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 'bold', color: '#00ffcc', lineHeight: '1' }}>
+          <div style={{ textAlign: 'center', padding: '5px', background: 'rgba(0, 255, 204, 0.05)', borderRadius: '6px', border: '1px solid rgba(0, 255, 204, 0.2)' }}>
+            <Activity size={16} style={{ color: '#00ffcc', marginBottom: '2px' }} />
+            <p style={{ color: '#9ca3af', fontSize: 'clamp(7px, 1.2vw, 8px)', marginBottom: '1px' }}>Power</p>
+            <p style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontWeight: 'bold', color: '#00ffcc', lineHeight: '1' }}>
               {liveData.power.toFixed(1)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>kW</span>
             </p>
           </div>
 
           {/* Efficiency */}
-          <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(250, 204, 21, 0.05)', borderRadius: '8px', border: '1px solid rgba(250, 204, 21, 0.2)' }}>
-            <TrendingUp size={24} style={{ color: '#facc15', marginBottom: '4px' }} />
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)', marginBottom: '2px' }}>Efficiency</p>
-            <p style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 'bold', color: '#facc15', lineHeight: '1' }}>
+          <div style={{ textAlign: 'center', padding: '5px', background: 'rgba(250, 204, 21, 0.05)', borderRadius: '6px', border: '1px solid rgba(250, 204, 21, 0.2)' }}>
+            <TrendingUp size={16} style={{ color: '#facc15', marginBottom: '2px' }} />
+            <p style={{ color: '#9ca3af', fontSize: 'clamp(7px, 1.2vw, 8px)', marginBottom: '1px' }}>Efficiency</p>
+            <p style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontWeight: 'bold', color: '#facc15', lineHeight: '1' }}>
               {liveData.efficiency.toFixed(1)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>%</span>
             </p>
           </div>
 
           {/* RUL */}
-          <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 255, 204, 0.05)', borderRadius: '8px', border: '1px solid rgba(0, 255, 204, 0.2)' }}>
-            <Clock size={24} style={{ color: '#00ffcc', marginBottom: '4px' }} />
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)', marginBottom: '2px' }}>RUL</p>
-            <p style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 'bold', color: '#00ffcc', lineHeight: '1' }}>
+          <div style={{ textAlign: 'center', padding: '5px', background: 'rgba(0, 255, 204, 0.05)', borderRadius: '6px', border: '1px solid rgba(0, 255, 204, 0.2)' }}>
+            <Clock size={16} style={{ color: '#00ffcc', marginBottom: '2px' }} />
+            <p style={{ color: '#9ca3af', fontSize: 'clamp(7px, 1.2vw, 8px)', marginBottom: '1px' }}>RUL</p>
+            <p style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontWeight: 'bold', color: '#00ffcc', lineHeight: '1' }}>
               {Math.floor(liveData.rul)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>C</span>
             </p>
           </div>
         </div>
       </div>
 
-      {/* 메인 차트 섹션 - Responsive */}
-      <div className="main-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '12px', marginBottom: '12px' }}>
+      {/* 메인 차트 섹션 - Ultra Compact */}
+      <div className="main-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '8px', marginBottom: '8px' }}>
         {/* 실시간 4파라미터 모니터링 */}
         <div style={{
           background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
+          borderRadius: '8px',
+          padding: '10px',
           border: '1px solid rgba(0, 255, 204, 0.3)',
         }}>
-          <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Activity size={18} style={{ color: '#00ffcc' }} />
+          <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 14px)', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Activity size={14} style={{ color: '#00ffcc' }} />
             실시간 ESS 파라미터 모니터링
           </h2>
-          <ResponsiveContainer width="100%" height={150}>
+          <ResponsiveContainer width="100%" height={100}>
             <LineChart data={realtimeData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
-              <XAxis dataKey="time" stroke="#64748b" style={{ fontSize: '10px' }} />
-              <YAxis yAxisId="left" stroke="#facc15" style={{ fontSize: '10px' }} />
-              <YAxis yAxisId="right" orientation="right" stroke="#00ffcc" style={{ fontSize: '10px' }} />
+              <XAxis dataKey="time" stroke="#64748b" style={{ fontSize: '8px' }} />
+              <YAxis yAxisId="left" stroke="#facc15" style={{ fontSize: '8px' }} />
+              <YAxis yAxisId="right" orientation="right" stroke="#00ffcc" style={{ fontSize: '8px' }} />
               <Tooltip 
                 contentStyle={{ 
                   backgroundColor: '#0f1f3a', 
@@ -405,15 +405,15 @@ const BatteryDashboard = () => {
         {/* AI 진단 로그 */}
         <div style={{
           background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
+          borderRadius: '8px',
+          padding: '10px',
           border: '1px solid rgba(0, 255, 204, 0.3)',
         }}>
-          <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <AlertTriangle size={18} style={{ color: '#00ffcc' }} />
+          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <AlertTriangle size={14} style={{ color: '#00ffcc' }} />
             ESS AI 진단
           </h2>
-          <div style={{ maxHeight: '150px', overflowY: 'auto', paddingRight: '4px' }}>
+          <div style={{ maxHeight: '100px', overflowY: 'auto', paddingRight: '4px' }}>
             {aiLogs.map((log) => (
               <div 
                 key={log.id}
@@ -424,9 +424,9 @@ const BatteryDashboard = () => {
                     log.level === 'success' ? '#00ff88' : 
                     '#00ffcc'
                   }`,
-                  padding: '10px',
+                  padding: '8px',
                   borderRadius: '0 6px 6px 0',
-                  marginBottom: '8px',
+                  marginBottom: '6px',
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', alignItems: 'center', flexWrap: 'wrap', gap: '4px' }}>
@@ -450,12 +450,12 @@ const BatteryDashboard = () => {
         {/* 셀 전압 분포 */}
         <div style={{
           background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
+          borderRadius: '8px',
+          padding: '10px',
           border: '1px solid rgba(0, 255, 204, 0.3)',
         }}>
-          <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Grid size={18} style={{ color: '#00ffcc' }} />
+          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Grid size={14} style={{ color: '#00ffcc' }} />
             ESS 셀 전압 분포 (16 Cells)
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
@@ -491,12 +491,12 @@ const BatteryDashboard = () => {
         {/* 온도 분포 */}
         <div style={{
           background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
+          borderRadius: '8px',
+          padding: '10px',
           border: '1px solid rgba(0, 255, 204, 0.3)',
         }}>
-          <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Thermometer size={18} style={{ color: '#facc15' }} />
+          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Thermometer size={14} style={{ color: '#facc15' }} />
             온도 센서 분포 (8 Sensors)
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
@@ -539,19 +539,19 @@ const BatteryDashboard = () => {
         {/* 충방전 사이클 히스토리 */}
         <div style={{
           background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
+          borderRadius: '8px',
+          padding: '10px',
           border: '1px solid rgba(0, 255, 204, 0.3)',
         }}>
-          <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <BarChart3 size={18} style={{ color: '#00ffcc' }} />
+          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <BarChart3 size={14} style={{ color: '#00ffcc' }} />
             24시간 충방전 사이클
           </h2>
-          <ResponsiveContainer width="100%" height={140}>
+          <ResponsiveContainer width="100%" height={100}>
             <BarChart data={cycleHistory}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
               <XAxis dataKey="hour" stroke="#64748b" style={{ fontSize: '9px' }} />
-              <YAxis stroke="#64748b" style={{ fontSize: '10px' }} />
+              <YAxis stroke="#64748b" style={{ fontSize: '8px' }} />
               <Tooltip 
                 contentStyle={{ 
                   backgroundColor: '#0f1f3a', 
@@ -569,15 +569,15 @@ const BatteryDashboard = () => {
         {/* AI 예측 수명 곡선 */}
         <div style={{
           background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
+          borderRadius: '8px',
+          padding: '10px',
           border: '1px solid rgba(0, 255, 204, 0.3)',
         }}>
-          <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <TrendingUp size={18} style={{ color: '#00ffcc' }} />
+          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <TrendingUp size={14} style={{ color: '#00ffcc' }} />
             AI 기반 수명 예측 곡선
           </h2>
-          <ResponsiveContainer width="100%" height={140}>
+          <ResponsiveContainer width="100%" height={100}>
             <AreaChart data={lifeCurveData}>
               <defs>
                 <linearGradient id="colorPredicted" x1="0" y1="0" x2="0" y2="1">
@@ -591,7 +591,7 @@ const BatteryDashboard = () => {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
               <XAxis dataKey="month" stroke="#64748b" style={{ fontSize: '9px' }} />
-              <YAxis stroke="#64748b" style={{ fontSize: '10px' }} />
+              <YAxis stroke="#64748b" style={{ fontSize: '8px' }} />
               <Tooltip 
                 contentStyle={{ 
                   backgroundColor: '#0f1f3a', 
@@ -618,7 +618,7 @@ const BatteryDashboard = () => {
           border: '1px solid rgba(0, 255, 204, 0.3)',
         }}>
           <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Waves size={18} style={{ color: '#00ffcc' }} />
+            <Waves size={14} style={{ color: '#00ffcc' }} />
             실시간 전력 흐름
           </h2>
           <div className="power-flow-container" style={{ 
@@ -825,15 +825,15 @@ const BatteryDashboard = () => {
         {/* 셀 밸런싱 상태 */}
         <div style={{
           background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
+          borderRadius: '8px',
+          padding: '10px',
           border: '1px solid rgba(0, 255, 204, 0.3)',
         }}>
-          <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Gauge size={18} style={{ color: '#00ffcc' }} />
+          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Gauge size={14} style={{ color: '#00ffcc' }} />
             셀 밸런싱 상세 분석 (16 Cells)
           </h2>
-          <ResponsiveContainer width="100%" height={140}>
+          <ResponsiveContainer width="100%" height={100}>
             <ComposedChart data={cellBalancingData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
               <XAxis dataKey="cell" stroke="#64748b" style={{ fontSize: '9px' }} />
@@ -884,15 +884,15 @@ const BatteryDashboard = () => {
         {/* SOH/SOC 히스토리 트렌드 */}
         <div style={{
           background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
+          borderRadius: '8px',
+          padding: '10px',
           border: '1px solid rgba(0, 255, 204, 0.3)',
         }}>
-          <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <TrendingUp size={18} style={{ color: '#00ffcc' }} />
+          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <TrendingUp size={14} style={{ color: '#00ffcc' }} />
             SOH/SOC 7일 트렌드 분석
           </h2>
-          <ResponsiveContainer width="100%" height={140}>
+          <ResponsiveContainer width="100%" height={100}>
             <ComposedChart data={healthTrend}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
               <XAxis dataKey="day" stroke="#64748b" style={{ fontSize: '9px' }} />
@@ -916,15 +916,15 @@ const BatteryDashboard = () => {
         {/* 에너지 효율 트렌드 */}
         <div style={{
           background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
+          borderRadius: '8px',
+          padding: '10px',
           border: '1px solid rgba(0, 255, 204, 0.3)',
         }}>
-          <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Activity size={18} style={{ color: '#facc15' }} />
+          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Activity size={14} style={{ color: '#facc15' }} />
             24시간 에너지 효율 분석
           </h2>
-          <ResponsiveContainer width="100%" height={140}>
+          <ResponsiveContainer width="100%" height={100}>
             <LineChart data={efficiencyTrend}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
               <XAxis dataKey="hour" stroke="#64748b" style={{ fontSize: '9px' }} />
@@ -968,15 +968,15 @@ const BatteryDashboard = () => {
         marginBottom: '16px'
       }}>
         <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Thermometer size={18} style={{ color: '#facc15' }} />
+          <Thermometer size={14} style={{ color: '#facc15' }} />
           배터리 셀 온도 분포 히트맵 (4x4 Grid)
         </h2>
         <div className="heatmap-container" style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
-          <ResponsiveContainer width="100%" height={180}>
+          <ResponsiveContainer width="100%" height={100}>
             <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
-              <XAxis type="number" dataKey="x" domain={[-0.5, 3.5]} ticks={[0, 1, 2, 3]} stroke="#64748b" style={{ fontSize: '10px' }} />
-              <YAxis type="number" dataKey="y" domain={[-0.5, 3.5]} ticks={[0, 1, 2, 3]} stroke="#64748b" style={{ fontSize: '10px' }} reversed />
+              <XAxis type="number" dataKey="x" domain={[-0.5, 3.5]} ticks={[0, 1, 2, 3]} stroke="#64748b" style={{ fontSize: '8px' }} />
+              <YAxis type="number" dataKey="y" domain={[-0.5, 3.5]} ticks={[0, 1, 2, 3]} stroke="#64748b" style={{ fontSize: '8px' }} reversed />
               <ZAxis type="number" dataKey="temp" range={[300, 700]} />
               <Tooltip 
                 cursor={{ strokeDasharray: '3 3' }}
@@ -1006,7 +1006,7 @@ const BatteryDashboard = () => {
           <div className="legend-stats" style={{ 
             display: 'grid', 
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '12px',
+            gap: '8px',
             width: '100%'
           }}>
             <div>
