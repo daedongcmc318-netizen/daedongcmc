@@ -289,103 +289,63 @@ const BatteryDashboard = () => {
         </div>
       </header>
 
-      {/* 핵심 지표 카드 - Responsive Grid */}
-      <div className="metrics-grid" style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', 
-        gap: '12px',
+      {/* 핵심 지표 카드 - Compact Design */}
+      <div style={{
+        background: '#0f1f3a',
+        borderRadius: '12px',
+        padding: '16px',
+        border: '1px solid rgba(0, 255, 204, 0.3)',
         marginBottom: '16px'
       }}>
-        {/* SOH */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
-          border: '1px solid rgba(0, 255, 136, 0.3)',
-          boxShadow: '0 0 20px rgba(0, 255, 136, 0.2)',
+        <div className="metrics-grid" style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', 
+          gap: '12px'
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)' }}>SOH</p>
-            <Battery size={20} style={{ color: '#00ff88' }} />
+          {/* SOH */}
+          <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 255, 136, 0.05)', borderRadius: '8px', border: '1px solid rgba(0, 255, 136, 0.2)' }}>
+            <Battery size={24} style={{ color: '#00ff88', marginBottom: '4px' }} />
+            <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)', marginBottom: '2px' }}>SOH</p>
+            <p style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 'bold', color: '#00ff88', lineHeight: '1' }}>
+              {liveData.soh.toFixed(1)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>%</span>
+            </p>
           </div>
-          <h3 style={{ fontSize: 'clamp(24px, 5vw, 36px)', fontWeight: 'bold', color: '#00ff88', marginBottom: '4px' }}>
-            {liveData.soh.toFixed(1)}%
-          </h3>
-          <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 11px)' }}>건강도 정상</p>
-        </div>
 
-        {/* SOC */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
-          border: '1px solid rgba(0, 255, 204, 0.3)',
-          boxShadow: '0 0 20px rgba(0, 255, 204, 0.2)',
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)' }}>SOC</p>
-            <Zap size={20} style={{ color: '#00ffcc' }} />
+          {/* SOC */}
+          <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 255, 204, 0.05)', borderRadius: '8px', border: '1px solid rgba(0, 255, 204, 0.2)' }}>
+            <Zap size={24} style={{ color: '#00ffcc', marginBottom: '4px' }} />
+            <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)', marginBottom: '2px' }}>SOC</p>
+            <p style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 'bold', color: '#00ffcc', lineHeight: '1' }}>
+              {liveData.soc.toFixed(1)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>%</span>
+            </p>
           </div>
-          <h3 style={{ fontSize: 'clamp(24px, 5vw, 36px)', fontWeight: 'bold', color: '#00ffcc', marginBottom: '4px' }}>
-            {liveData.soc.toFixed(1)}%
-          </h3>
-          <div style={{ width: '100%', height: '4px', background: '#1a2942', borderRadius: '2px', overflow: 'hidden', marginTop: '8px' }}>
-            <div style={{ width: `${liveData.soc}%`, height: '100%', background: 'linear-gradient(to right, #00ffcc, #00ff88)', transition: 'width 1s' }}></div>
-          </div>
-        </div>
 
-        {/* Power */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
-          border: '1px solid rgba(0, 255, 204, 0.3)',
-          boxShadow: '0 0 20px rgba(0, 255, 204, 0.2)',
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)' }}>Power</p>
-            <Activity size={20} style={{ color: '#00ffcc' }} />
+          {/* Power */}
+          <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 255, 204, 0.05)', borderRadius: '8px', border: '1px solid rgba(0, 255, 204, 0.2)' }}>
+            <Activity size={24} style={{ color: '#00ffcc', marginBottom: '4px' }} />
+            <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)', marginBottom: '2px' }}>Power</p>
+            <p style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 'bold', color: '#00ffcc', lineHeight: '1' }}>
+              {liveData.power.toFixed(1)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>kW</span>
+            </p>
           </div>
-          <h3 style={{ fontSize: 'clamp(24px, 5vw, 36px)', fontWeight: 'bold', color: '#00ffcc', marginBottom: '4px' }}>
-            {liveData.power.toFixed(2)}
-          </h3>
-          <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 11px)' }}>kW</p>
-        </div>
 
-        {/* Efficiency */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
-          border: '1px solid rgba(250, 204, 21, 0.3)',
-          boxShadow: '0 0 20px rgba(250, 204, 21, 0.2)',
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)' }}>Efficiency</p>
-            <TrendingUp size={20} style={{ color: '#facc15' }} />
+          {/* Efficiency */}
+          <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(250, 204, 21, 0.05)', borderRadius: '8px', border: '1px solid rgba(250, 204, 21, 0.2)' }}>
+            <TrendingUp size={24} style={{ color: '#facc15', marginBottom: '4px' }} />
+            <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)', marginBottom: '2px' }}>Efficiency</p>
+            <p style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 'bold', color: '#facc15', lineHeight: '1' }}>
+              {liveData.efficiency.toFixed(1)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>%</span>
+            </p>
           </div>
-          <h3 style={{ fontSize: 'clamp(24px, 5vw, 36px)', fontWeight: 'bold', color: '#facc15', marginBottom: '4px' }}>
-            {liveData.efficiency.toFixed(1)}%
-          </h3>
-          <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 11px)' }}>에너지 효율</p>
-        </div>
 
-        {/* RUL */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '12px',
-          padding: '16px',
-          border: '1px solid rgba(0, 255, 204, 0.3)',
-          boxShadow: '0 0 20px rgba(0, 255, 204, 0.2)',
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)' }}>RUL</p>
-            <Clock size={20} style={{ color: '#00ffcc' }} />
+          {/* RUL */}
+          <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 255, 204, 0.05)', borderRadius: '8px', border: '1px solid rgba(0, 255, 204, 0.2)' }}>
+            <Clock size={24} style={{ color: '#00ffcc', marginBottom: '4px' }} />
+            <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)', marginBottom: '2px' }}>RUL</p>
+            <p style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 'bold', color: '#00ffcc', lineHeight: '1' }}>
+              {Math.floor(liveData.rul)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>C</span>
+            </p>
           </div>
-          <h3 style={{ fontSize: 'clamp(24px, 5vw, 36px)', fontWeight: 'bold', color: '#00ffcc', marginBottom: '4px' }}>
-            {Math.floor(liveData.rul)}
-          </h3>
-          <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 11px)' }}>Cycles ({Math.floor(liveData.rul / 30)}개월)</p>
         </div>
       </div>
 
@@ -485,7 +445,7 @@ const BatteryDashboard = () => {
         </div>
       </div>
 
-      {/* 셀 전압 분포 & 온도 분포 - Responsive */}
+      {/* 셀 전압 분포 & 온도 분포 - Compact Grid View */}
       <div className="distribution-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '16px' }}>
         {/* 셀 전압 분포 */}
         <div style={{
@@ -498,35 +458,33 @@ const BatteryDashboard = () => {
             <Grid size={18} style={{ color: '#00ffcc' }} />
             ESS 셀 전압 분포 (16 Cells)
           </h2>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={cellVoltages}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
-              <XAxis dataKey="cell" stroke="#64748b" style={{ fontSize: '9px' }} />
-              <YAxis stroke="#64748b" style={{ fontSize: '10px' }} domain={[3.5, 4.1]} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#0f1f3a', 
-                  border: '1px solid #00ffcc',
-                  borderRadius: '8px',
-                  fontSize: '11px'
-                }} 
-              />
-              <Bar dataKey="voltage" radius={[4, 4, 0, 0]}>
-                {cellVoltages.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.status === 'normal' ? '#00ff88' : '#facc15'} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', fontSize: 'clamp(9px, 1.8vw, 11px)', flexWrap: 'wrap', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <div style={{ width: '10px', height: '10px', background: '#00ff88', borderRadius: '2px' }}></div>
-              <span style={{ color: '#9ca3af' }}>정상</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <div style={{ width: '10px', height: '10px', background: '#facc15', borderRadius: '2px' }}></div>
-              <span style={{ color: '#9ca3af' }}>경고</span>
-            </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+            {cellVoltages.map((cell, index) => (
+              <div key={`cell-${index}`} style={{
+                background: 'rgba(0, 0, 0, 0.3)',
+                borderRadius: '8px',
+                padding: '10px 8px',
+                textAlign: 'center',
+                border: `2px solid ${cell.status === 'normal' ? '#00ff88' : '#facc15'}`,
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: `${((cell.voltage - 3.5) / 0.6) * 100}%`,
+                  background: cell.status === 'normal' ? 'rgba(0, 255, 136, 0.2)' : 'rgba(250, 204, 21, 0.2)',
+                  transition: 'height 0.5s'
+                }}></div>
+                <p style={{ fontSize: 'clamp(9px, 1.8vw, 10px)', color: '#9ca3af', marginBottom: '4px', position: 'relative', zIndex: 1 }}>셀{index + 1}</p>
+                <p style={{ fontSize: 'clamp(14px, 2.8vw, 16px)', fontWeight: 'bold', color: cell.status === 'normal' ? '#00ff88' : '#facc15', position: 'relative', zIndex: 1 }}>
+                  {cell.voltage.toFixed(2)}
+                </p>
+                <p style={{ fontSize: 'clamp(8px, 1.6vw, 9px)', color: '#9ca3af', position: 'relative', zIndex: 1 }}>V</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -541,46 +499,37 @@ const BatteryDashboard = () => {
             <Thermometer size={18} style={{ color: '#facc15' }} />
             온도 센서 분포 (8 Sensors)
           </h2>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={temperatureDistribution}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
-              <XAxis dataKey="sensor" stroke="#64748b" style={{ fontSize: '9px' }} />
-              <YAxis stroke="#64748b" style={{ fontSize: '10px' }} domain={[30, 45]} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#0f1f3a', 
-                  border: '1px solid #facc15',
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+            {temperatureDistribution.map((sensor, index) => {
+              const tempColor = sensor.temp < 40 ? '#00ff88' : sensor.temp < 42 ? '#facc15' : '#ff6b9d';
+              const tempPercent = ((sensor.temp - 30) / 15) * 100;
+              return (
+                <div key={`temp-${index}`} style={{
+                  background: 'rgba(0, 0, 0, 0.3)',
                   borderRadius: '8px',
-                  fontSize: '11px'
-                }} 
-              />
-              <Bar dataKey="temp" radius={[4, 4, 0, 0]}>
-                {temperatureDistribution.map((entry, index) => (
-                  <Cell 
-                    key={`temp-${index}`} 
-                    fill={
-                      entry.temp < 40 ? '#00ff88' : 
-                      entry.temp < 42 ? '#facc15' : 
-                      '#ff6b9d'
-                    } 
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', fontSize: 'clamp(9px, 1.8vw, 11px)', flexWrap: 'wrap', gap: '6px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <div style={{ width: '10px', height: '10px', background: '#00ff88', borderRadius: '2px' }}></div>
-              <span style={{ color: '#9ca3af' }}>정상</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <div style={{ width: '10px', height: '10px', background: '#facc15', borderRadius: '2px' }}></div>
-              <span style={{ color: '#9ca3af' }}>주의</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <div style={{ width: '10px', height: '10px', background: '#ff6b9d', borderRadius: '2px' }}></div>
-              <span style={{ color: '#9ca3af' }}>경고</span>
-            </div>
+                  padding: '10px 8px',
+                  textAlign: 'center',
+                  border: `2px solid ${tempColor}`,
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: `${tempPercent}%`,
+                    background: tempColor === '#00ff88' ? 'rgba(0, 255, 136, 0.2)' : tempColor === '#facc15' ? 'rgba(250, 204, 21, 0.2)' : 'rgba(255, 107, 157, 0.2)',
+                    transition: 'height 0.5s'
+                  }}></div>
+                  <p style={{ fontSize: 'clamp(9px, 1.8vw, 10px)', color: '#9ca3af', marginBottom: '4px', position: 'relative', zIndex: 1 }}>{sensor.sensor}</p>
+                  <p style={{ fontSize: 'clamp(14px, 2.8vw, 16px)', fontWeight: 'bold', color: tempColor, position: 'relative', zIndex: 1 }}>
+                    {sensor.temp.toFixed(1)}
+                  </p>
+                  <p style={{ fontSize: 'clamp(8px, 1.6vw, 9px)', color: '#9ca3af', position: 'relative', zIndex: 1 }}>°C</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
