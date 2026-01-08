@@ -43,11 +43,18 @@ const BatteryDashboard = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // ESS 수명 예측 데이터 (7일)
-  const healthTrendData = Array.from({ length: 7 }, (_, i) => ({
-    day: `${i + 1}일`,
-    실제수명: 97 - i * 0.3 + Math.random() * 0.5,
-    예측수명: 96.5 - i * 0.25 + Math.random() * 0.5,
+  // ESS 전체 남은 수명(RUL) 예측 데이터
+  const remainingLifeYears = 8.5; // 남은 년수
+  const remainingCycles = 5045; // 남은 사이클 수 (10,000 - 4,955)
+  const totalDesignCycles = 10000;
+  const usedCycles = liveData.cycleCount;
+  const remainingCyclesPercent = ((totalDesignCycles - usedCycles) / totalDesignCycles * 100).toFixed(1);
+
+  // RUL 트렌드 데이터 (12개월 예측)
+  const rulTrendData = Array.from({ length: 12 }, (_, i) => ({
+    month: `${i + 1}개월`,
+    예측RUL: Math.max(0, remainingLifeYears - (i * 0.7) + (Math.random() - 0.5) * 0.3),
+    SOH예측: Math.max(80, liveData.soh - (i * 0.5) + (Math.random() - 0.5) * 0.5),
   }));
 
   // 배터리 정보 데이터 (소수점 1자리)
@@ -127,7 +134,7 @@ const BatteryDashboard = () => {
       {/* 메인 대시보드 */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
         
-        {/* 좌측: ESS 수명 예측 차트 */}
+        {/* 좌측: ESS 전체 남은 수명(RUL) 예측 */}
         <div style={{
           background: '#fff',
           borderRadius: '8px',
@@ -136,23 +143,94 @@ const BatteryDashboard = () => {
           gridColumn: 'span 2'
         }}>
           <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#262626', marginBottom: '20px' }}>
-            ESS 수명 예측
+            ESS 전체 남은 수명 예측 (RUL)
           </h2>
+          
+          {/* 핵심 수명 지표 */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(4, 1fr)', 
+            gap: '12px', 
+            marginBottom: '20px' 
+          }}>
+            {/* 남은 년수 */}
+            <div style={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              borderRadius: '8px',
+              padding: '16px',
+              color: '#fff',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '11px', opacity: 0.9, marginBottom: '6px' }}>남은 년수</div>
+              <div style={{ fontSize: '28px', fontWeight: 'bold' }}>
+                {remainingLifeYears.toFixed(1)}
+                <span style={{ fontSize: '14px', opacity: 0.9, marginLeft: '4px' }}>년</span>
+              </div>
+            </div>
+
+            {/* 남은 사이클 */}
+            <div style={{
+              background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+              borderRadius: '8px',
+              padding: '16px',
+              color: '#fff',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '11px', opacity: 0.9, marginBottom: '6px' }}>남은 사이클</div>
+              <div style={{ fontSize: '28px', fontWeight: 'bold' }}>
+                {remainingCycles.toLocaleString()}
+                <span style={{ fontSize: '14px', opacity: 0.9, marginLeft: '4px' }}>회</span>
+              </div>
+            </div>
+
+            {/* 사용률 */}
+            <div style={{
+              background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+              borderRadius: '8px',
+              padding: '16px',
+              color: '#fff',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '11px', opacity: 0.9, marginBottom: '6px' }}>사이클 사용률</div>
+              <div style={{ fontSize: '28px', fontWeight: 'bold' }}>
+                {((usedCycles / totalDesignCycles) * 100).toFixed(1)}
+                <span style={{ fontSize: '14px', opacity: 0.9, marginLeft: '4px' }}>%</span>
+              </div>
+            </div>
+
+            {/* 잔여 용량 비율 */}
+            <div style={{
+              background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+              borderRadius: '8px',
+              padding: '16px',
+              color: '#fff',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '11px', opacity: 0.9, marginBottom: '6px' }}>잔여 용량 비율</div>
+              <div style={{ fontSize: '28px', fontWeight: 'bold' }}>
+                {remainingCyclesPercent}
+                <span style={{ fontSize: '14px', opacity: 0.9, marginLeft: '4px' }}>%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* RUL 트렌드 차트 */}
           <div style={{ display: 'flex', gap: '16px', marginBottom: '12px', fontSize: '13px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '12px', height: '12px', background: '#1890ff', borderRadius: '50%', display: 'inline-block' }}></span>
-              <span style={{ color: '#595959' }}>실제 수명</span>
+              <span style={{ width: '12px', height: '12px', background: '#667eea', borderRadius: '50%', display: 'inline-block' }}></span>
+              <span style={{ color: '#595959' }}>예측 RUL (년)</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ width: '12px', height: '12px', background: '#52c41a', borderRadius: '50%', display: 'inline-block' }}></span>
-              <span style={{ color: '#595959' }}>예측 수명</span>
+              <span style={{ color: '#595959' }}>SOH 예측 (%)</span>
             </div>
           </div>
           <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={healthTrendData}>
+            <LineChart data={rulTrendData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="day" stroke="#8c8c8c" style={{ fontSize: '12px' }} />
-              <YAxis domain={[90, 100]} stroke="#8c8c8c" style={{ fontSize: '12px' }} />
+              <XAxis dataKey="month" stroke="#8c8c8c" style={{ fontSize: '12px' }} />
+              <YAxis yAxisId="left" domain={[0, 10]} stroke="#8c8c8c" style={{ fontSize: '12px' }} />
+              <YAxis yAxisId="right" orientation="right" domain={[80, 100]} stroke="#8c8c8c" style={{ fontSize: '12px' }} />
               <Tooltip 
                 contentStyle={{ 
                   background: '#fff', 
@@ -162,15 +240,17 @@ const BatteryDashboard = () => {
                 }} 
               />
               <Line 
+                yAxisId="left"
                 type="monotone" 
-                dataKey="실제수명" 
-                stroke="#1890ff" 
+                dataKey="예측RUL" 
+                stroke="#667eea" 
                 strokeWidth={3}
-                dot={{ fill: '#1890ff', r: 4 }}
+                dot={{ fill: '#667eea', r: 4 }}
               />
               <Line 
+                yAxisId="right"
                 type="monotone" 
-                dataKey="예측수명" 
+                dataKey="SOH예측" 
                 stroke="#52c41a" 
                 strokeWidth={3}
                 dot={{ fill: '#52c41a', r: 4 }}
