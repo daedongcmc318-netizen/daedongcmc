@@ -108,48 +108,108 @@ const BatteryDashboard = () => {
       padding: '20px',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
     }}>
-      {/* 헤더 */}
+      {/* 헤더 + 탭 */}
       <div style={{
         background: '#fff',
-        padding: '16px 24px',
         borderRadius: '8px',
         marginBottom: '20px',
         boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '12px'
       }}>
-        <div>
-          <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff', margin: 0 }}>
-            ESS 배터리 진단 솔루션
-          </h1>
-        </div>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '20px',
-          color: '#595959',
-          fontSize: '14px'
+        {/* 헤더 */}
+        <div style={{
+          padding: '16px 24px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '12px',
+          borderBottom: '1px solid #f0f0f0'
         }}>
           <div>
-            <Clock size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
-            {time.toLocaleTimeString('ko-KR')}
+            <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff', margin: 0 }}>
+              ESS 배터리 진단 솔루션
+            </h1>
           </div>
-          <div style={{
-            background: '#f0f9ff',
-            padding: '6px 16px',
-            borderRadius: '4px',
-            color: '#1890ff',
-            fontWeight: '600'
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '20px',
+            color: '#595959',
+            fontSize: '14px'
           }}>
-            실시간 모니터링
+            <div>
+              <Clock size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+              {time.toLocaleTimeString('ko-KR')}
+            </div>
+            <div style={{
+              background: '#f0f9ff',
+              padding: '6px 16px',
+              borderRadius: '4px',
+              color: '#1890ff',
+              fontWeight: '600'
+            }}>
+              실시간 모니터링
+            </div>
           </div>
+        </div>
+        
+        {/* 탭 네비게이션 */}
+        <div style={{
+          padding: '8px',
+          display: 'flex',
+          gap: '8px',
+          overflowX: 'auto'
+        }}>
+          {[
+            { id: 'monitor', icon: '📊', label: '실시간 모니터링', color: '#1890ff' },
+            { id: 'safety', icon: '🔥', label: '안전 및 리스크', color: '#f5222d' },
+            { id: 'performance', icon: '⚙️', label: '성능 분석', color: '#13c2c2' },
+            { id: 'economics', icon: '💰', label: '경제성/환경', color: '#52c41a' },
+            { id: 'operation', icon: '🔧', label: '운영/유지보수', color: '#722ed1' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                flex: '1',
+                minWidth: '140px',
+                padding: '12px 16px',
+                background: activeTab === tab.id 
+                  ? `linear-gradient(135deg, ${tab.color} 0%, ${tab.color}dd 100%)` 
+                  : '#f5f5f5',
+                border: 'none',
+                borderRadius: '6px',
+                color: activeTab === tab.id ? '#fff' : '#595959',
+                fontSize: '14px',
+                fontWeight: activeTab === tab.id ? '600' : '500',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                boxShadow: activeTab === tab.id ? '0 2px 8px rgba(0,0,0,0.15)' : 'none'
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== tab.id) {
+                  e.currentTarget.style.background = '#e8e8e8';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== tab.id) {
+                  e.currentTarget.style.background = '#f5f5f5';
+                }
+              }}
+            >
+              <span>{tab.icon}</span>
+              <span>{tab.label}</span>
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* 메인 대시보드 */}
+      {/* 탭 1: 실시간 모니터링 */}
+      {activeTab === 'monitor' && (
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
         
         {/* 좌측: ESS 전체 남은 수명(RUL) 예측 */}
@@ -709,93 +769,10 @@ const BatteryDashboard = () => {
           </div>
         </div>
       </div>
+      )}
 
-      {/* 탭 네비게이션 */}
-      <div style={{ marginTop: '20px' }}>
-        <div style={{
-          background: '#fff',
-          borderRadius: '8px',
-          padding: '8px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-          display: 'flex',
-          gap: '8px',
-          overflowX: 'auto'
-        }}>
-          {[
-            { id: 'monitor', icon: '📊', label: '실시간 모니터링', color: '#1890ff' },
-            { id: 'safety', icon: '🔥', label: '안전 및 리스크', color: '#f5222d' },
-            { id: 'performance', icon: '⚙️', label: '성능 분석', color: '#13c2c2' },
-            { id: 'economics', icon: '💰', label: '경제성/환경', color: '#52c41a' },
-            { id: 'operation', icon: '🔧', label: '운영/유지보수', color: '#722ed1' }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              style={{
-                flex: '1',
-                minWidth: '140px',
-                padding: '12px 16px',
-                background: activeTab === tab.id 
-                  ? `linear-gradient(135deg, ${tab.color} 0%, ${tab.color}dd 100%)` 
-                  : '#f5f5f5',
-                border: 'none',
-                borderRadius: '6px',
-                color: activeTab === tab.id ? '#fff' : '#595959',
-                fontSize: '14px',
-                fontWeight: activeTab === tab.id ? '600' : '500',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                boxShadow: activeTab === tab.id ? '0 2px 8px rgba(0,0,0,0.15)' : 'none'
-              }}
-              onMouseEnter={(e) => {
-                if (activeTab !== tab.id) {
-                  e.currentTarget.style.background = '#e8e8e8';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (activeTab !== tab.id) {
-                  e.currentTarget.style.background = '#f5f5f5';
-                }
-              }}
-            >
-              <span style={{ fontSize: '18px' }}>{tab.icon}</span>
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* 탭 콘텐츠 */}
-      <div style={{ marginTop: '20px' }}>
-        
-        {/* 탭 1: 실시간 모니터링 */}
-        {activeTab === 'monitor' && (
-          <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
-            {/* 기존 대시보드 내용이 여기 표시됨 (이미 위에 렌더링되어 있으므로 메시지만) */}
-            <div style={{
-              background: '#fff',
-              borderRadius: '8px',
-              padding: '24px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-              textAlign: 'center'
-            }}>
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>📊</div>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#262626', marginBottom: '8px' }}>
-                실시간 모니터링
-              </h3>
-              <p style={{ fontSize: '14px', color: '#8c8c8c', margin: 0 }}>
-                위의 대시보드에서 SOH, SOC, 배터리 정보, RUL 예측 등 실시간 모니터링 데이터를 확인할 수 있습니다.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* 탭 2: 안전 및 리스크 관리 */}
-        {activeTab === 'safety' && (
+      {/* 탭 2: 안전 및 리스크 관리 */}
+      {activeTab === 'safety' && (
           <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
         
@@ -1421,8 +1398,6 @@ const BatteryDashboard = () => {
       </div>
           </div>
         )}
-
-      </div>
 
       <style>
         {`
