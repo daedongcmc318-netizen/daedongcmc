@@ -21,6 +21,17 @@ const BatteryDashboard = () => {
     minTemp: 23.2,
     capacity: 2500, // kWh
     remainingCapacity: 2475, // kWh
+    // 심화 진단 데이터
+    thermalRunawayIndex: 2.3, // 열폭주 위험 지수 (0-10, 0=안전)
+    tempRiseRate: 0.15, // 온도 상승률 (°C/min)
+    insulationResistance: 850, // 절연 저항 (kΩ)
+    gasLevel: 0, // 가스 감지 레벨 (0=정상)
+    internalResistance: 12.5, // 내부 저항 (mΩ)
+    roundTripEfficiency: 94.2, // 충방전 효율 (%)
+    avgDOD: 45.3, // 평균 방전심도 (%)
+    costSavings: 1245000, // 비용 절감액 (원/월)
+    co2Reduction: 3.8, // CO2 저감량 (톤/월)
+    lcoe: 125.5, // LCOE (원/kWh)
   });
 
   // 실시간 데이터 애니메이션
@@ -37,6 +48,12 @@ const BatteryDashboard = () => {
         power: Math.max(600, Math.min(620, prev.power + (Math.random() - 0.5) * 5)),
         maxTemp: Math.max(23, Math.min(28, prev.maxTemp + (Math.random() - 0.5) * 0.2)),
         minTemp: Math.max(22, Math.min(25, prev.minTemp + (Math.random() - 0.5) * 0.2)),
+        // 심화 진단 데이터 업데이트
+        thermalRunawayIndex: Math.max(0, Math.min(10, prev.thermalRunawayIndex + (Math.random() - 0.5) * 0.3)),
+        tempRiseRate: Math.max(0, Math.min(1, prev.tempRiseRate + (Math.random() - 0.5) * 0.05)),
+        insulationResistance: Math.max(500, Math.min(1000, prev.insulationResistance + (Math.random() - 0.5) * 10)),
+        internalResistance: Math.max(10, Math.min(15, prev.internalResistance + (Math.random() - 0.5) * 0.2)),
+        roundTripEfficiency: Math.max(90, Math.min(96, prev.roundTripEfficiency + (Math.random() - 0.5) * 0.3)),
       }));
     }, 2000);
 
@@ -610,6 +627,626 @@ const BatteryDashboard = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <span style={{ width: '10px', height: '10px', background: '#faad14', borderRadius: '2px' }}></span>
               <span style={{ color: '#8c8c8c' }}>주의 (&lt;3.75V)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 심화 진단 섹션 */}
+      <div style={{ marginTop: '20px' }}>
+        <h2 style={{ 
+          fontSize: '18px', 
+          fontWeight: '700', 
+          color: '#262626', 
+          marginBottom: '16px',
+          paddingBottom: '12px',
+          borderBottom: '2px solid #1890ff'
+        }}>
+          🔬 심화 진단 및 운영 지표
+        </h2>
+      </div>
+
+      {/* 1. 안전 및 리스크 관리 */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '20px' }}>
+        
+        {/* 열폭주 위험 지수 */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          border: liveData.thermalRunawayIndex > 5 ? '2px solid #f5222d' : '1px solid #f0f0f0'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <span style={{ fontSize: '20px' }}>🔥</span>
+            <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#262626', margin: 0 }}>
+              열폭주 위험 지수
+            </h3>
+          </div>
+          
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{ fontSize: '32px', fontWeight: 'bold', color: liveData.thermalRunawayIndex > 5 ? '#f5222d' : liveData.thermalRunawayIndex > 3 ? '#faad14' : '#52c41a' }}>
+              {liveData.thermalRunawayIndex.toFixed(1)}
+              <span style={{ fontSize: '14px', color: '#8c8c8c', marginLeft: '4px' }}>/10</span>
+            </div>
+            <div style={{ fontSize: '11px', color: '#8c8c8c', marginTop: '4px' }}>
+              온도 상승률: {liveData.tempRiseRate.toFixed(2)} °C/min
+            </div>
+          </div>
+
+          {/* 위험도 바 */}
+          <div style={{ 
+            height: '8px', 
+            background: '#f0f0f0', 
+            borderRadius: '4px', 
+            overflow: 'hidden',
+            marginBottom: '8px'
+          }}>
+            <div style={{ 
+              height: '100%', 
+              width: `${liveData.thermalRunawayIndex * 10}%`,
+              background: liveData.thermalRunawayIndex > 5 ? 'linear-gradient(90deg, #ff4d4f 0%, #ff7875 100%)' : 
+                         liveData.thermalRunawayIndex > 3 ? 'linear-gradient(90deg, #faad14 0%, #ffc53d 100%)' : 
+                         'linear-gradient(90deg, #52c41a 0%, #95de64 100%)',
+              transition: 'all 0.5s ease'
+            }}></div>
+          </div>
+
+          <div style={{ fontSize: '11px', color: '#8c8c8c' }}>
+            {liveData.thermalRunawayIndex > 5 ? '⚠️ 위험: 즉시 점검 필요' : 
+             liveData.thermalRunawayIndex > 3 ? '⚡ 주의: 모니터링 강화' : 
+             '✅ 안전: 정상 범위'}
+          </div>
+        </div>
+
+        {/* 절연 저항 모니터링 */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          border: liveData.insulationResistance < 600 ? '2px solid #f5222d' : '1px solid #f0f0f0'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <span style={{ fontSize: '20px' }}>🛡️</span>
+            <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#262626', margin: 0 }}>
+              절연 저항
+            </h3>
+          </div>
+          
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{ fontSize: '32px', fontWeight: 'bold', color: liveData.insulationResistance < 600 ? '#f5222d' : liveData.insulationResistance < 700 ? '#faad14' : '#52c41a' }}>
+              {liveData.insulationResistance.toFixed(0)}
+              <span style={{ fontSize: '14px', color: '#8c8c8c', marginLeft: '4px' }}>kΩ</span>
+            </div>
+            <div style={{ fontSize: '11px', color: '#8c8c8c', marginTop: '4px' }}>
+              안전 기준: ≥600 kΩ
+            </div>
+          </div>
+
+          <ResponsiveContainer width="100%" height={60}>
+            <AreaChart data={Array.from({ length: 20 }, (_, i) => ({
+              time: i,
+              value: 850 - i * 2 + Math.random() * 20
+            }))}>
+              <defs>
+                <linearGradient id="insulationGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#52c41a" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#52c41a" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <Area type="monotone" dataKey="value" stroke="#52c41a" fill="url(#insulationGradient)" strokeWidth={2} />
+            </AreaChart>
+          </ResponsiveContainer>
+
+          <div style={{ fontSize: '11px', color: '#8c8c8c', marginTop: '8px' }}>
+            {liveData.insulationResistance < 600 ? '⚠️ 경고: 누전 위험' : '✅ 정상: 절연 양호'}
+          </div>
+        </div>
+
+        {/* 가스/연기 감지 */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          border: liveData.gasLevel > 0 ? '2px solid #f5222d' : '1px solid #f0f0f0'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <span style={{ fontSize: '20px' }}>💨</span>
+            <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#262626', margin: 0 }}>
+              가스 감지 센서
+            </h3>
+          </div>
+          
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{ 
+              fontSize: '40px', 
+              textAlign: 'center',
+              marginBottom: '12px'
+            }}>
+              {liveData.gasLevel > 0 ? '🚨' : '✅'}
+            </div>
+            <div style={{ 
+              fontSize: '16px', 
+              fontWeight: 'bold', 
+              color: liveData.gasLevel > 0 ? '#f5222d' : '#52c41a',
+              textAlign: 'center'
+            }}>
+              {liveData.gasLevel > 0 ? '가스 감지됨' : '정상'}
+            </div>
+          </div>
+
+          <div style={{ 
+            padding: '12px', 
+            background: liveData.gasLevel > 0 ? '#fff1f0' : '#f6ffed',
+            borderRadius: '6px',
+            fontSize: '11px',
+            color: '#595959'
+          }}>
+            <div style={{ marginBottom: '4px', fontWeight: '600' }}>
+              오프가스 레벨: {liveData.gasLevel} ppm
+            </div>
+            <div style={{ color: '#8c8c8c' }}>
+              {liveData.gasLevel > 0 ? '⚠️ 즉시 환기 및 점검 필요' : '✅ 오프가스 미검출'}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. 정밀 노화 및 성능 진단 */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px', marginBottom: '20px' }}>
+        
+        {/* 내부 저항 변화 추이 */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          gridColumn: 'span 2'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <span style={{ fontSize: '20px' }}>⚙️</span>
+            <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#262626', margin: 0 }}>
+              내부 저항 변화 추이 (IR Trend)
+            </h3>
+          </div>
+
+          <div style={{ display: 'flex', gap: '20px', marginBottom: '16px' }}>
+            <div>
+              <div style={{ fontSize: '11px', color: '#8c8c8c' }}>현재 IR</div>
+              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff' }}>
+                {liveData.internalResistance.toFixed(1)}
+                <span style={{ fontSize: '12px', color: '#8c8c8c', marginLeft: '4px' }}>mΩ</span>
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: '11px', color: '#8c8c8c' }}>초기 IR</div>
+              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#8c8c8c' }}>
+                10.0
+                <span style={{ fontSize: '12px', color: '#8c8c8c', marginLeft: '4px' }}>mΩ</span>
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: '11px', color: '#8c8c8c' }}>증가율</div>
+              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#faad14' }}>
+                +{((liveData.internalResistance - 10) / 10 * 100).toFixed(1)}
+                <span style={{ fontSize: '12px', color: '#8c8c8c', marginLeft: '4px' }}>%</span>
+              </div>
+            </div>
+          </div>
+
+          <ResponsiveContainer width="100%" height={180}>
+            <LineChart data={Array.from({ length: 12 }, (_, i) => ({
+              month: `${i}M`,
+              ir: 10 + i * 0.2 + Math.random() * 0.3,
+              threshold: 15
+            }))}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="month" stroke="#8c8c8c" style={{ fontSize: '11px' }} />
+              <YAxis domain={[8, 16]} stroke="#8c8c8c" style={{ fontSize: '11px' }} />
+              <Tooltip 
+                contentStyle={{ 
+                  background: '#fff', 
+                  border: '1px solid #d9d9d9', 
+                  borderRadius: '4px',
+                  fontSize: '11px'
+                }}
+              />
+              <Line type="monotone" dataKey="ir" stroke="#1890ff" strokeWidth={3} dot={{ fill: '#1890ff', r: 4 }} name="내부 저항" />
+              <Line type="monotone" dataKey="threshold" stroke="#f5222d" strokeWidth={2} strokeDasharray="5 5" dot={false} name="임계값" />
+            </LineChart>
+          </ResponsiveContainer>
+
+          <div style={{ fontSize: '11px', color: '#8c8c8c', marginTop: '8px' }}>
+            💡 IR 증가는 배터리 노화의 직접적 지표입니다. 임계값(15mΩ) 도달 시 교체 권장
+          </div>
+        </div>
+
+        {/* 충·방전 효율 & DOD */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+            <span style={{ fontSize: '20px' }}>🔄</span>
+            <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#262626', margin: 0 }}>
+              효율 및 방전심도
+            </h3>
+          </div>
+
+          {/* Round-Trip Efficiency */}
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ fontSize: '11px', color: '#8c8c8c', marginBottom: '8px' }}>
+              충·방전 효율 (Round-Trip)
+            </div>
+            <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#13c2c2', marginBottom: '8px' }}>
+              {liveData.roundTripEfficiency.toFixed(1)}
+              <span style={{ fontSize: '14px', color: '#8c8c8c', marginLeft: '4px' }}>%</span>
+            </div>
+            <div style={{ 
+              height: '8px', 
+              background: '#f0f0f0', 
+              borderRadius: '4px', 
+              overflow: 'hidden'
+            }}>
+              <div style={{ 
+                height: '100%', 
+                width: `${liveData.roundTripEfficiency}%`,
+                background: 'linear-gradient(90deg, #13c2c2 0%, #36cfc9 100%)',
+                transition: 'all 0.5s ease'
+              }}></div>
+            </div>
+            <div style={{ fontSize: '10px', color: '#8c8c8c', marginTop: '4px' }}>
+              에너지 손실: {(100 - liveData.roundTripEfficiency).toFixed(1)}%
+            </div>
+          </div>
+
+          {/* Average DOD */}
+          <div>
+            <div style={{ fontSize: '11px', color: '#8c8c8c', marginBottom: '8px' }}>
+              평균 방전심도 (Avg DOD)
+            </div>
+            <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#722ed1', marginBottom: '8px' }}>
+              {liveData.avgDOD.toFixed(1)}
+              <span style={{ fontSize: '14px', color: '#8c8c8c', marginLeft: '4px' }}>%</span>
+            </div>
+            <div style={{ 
+              height: '8px', 
+              background: '#f0f0f0', 
+              borderRadius: '4px', 
+              overflow: 'hidden'
+            }}>
+              <div style={{ 
+                height: '100%', 
+                width: `${liveData.avgDOD}%`,
+                background: 'linear-gradient(90deg, #722ed1 0%, #9254de 100%)',
+                transition: 'all 0.5s ease'
+              }}></div>
+            </div>
+            <div style={{ fontSize: '10px', color: '#8c8c8c', marginTop: '4px' }}>
+              {liveData.avgDOD < 50 ? '✅ 적정 사용 (수명 연장에 유리)' : liveData.avgDOD < 80 ? '⚡ 주의 (수명 영향 있음)' : '⚠️ 과방전 (수명 단축 우려)'}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. 경제성 및 환경 지표 */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '20px' }}>
+        
+        {/* 비용 절감액 */}
+        <div style={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          color: '#fff'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+            <span style={{ fontSize: '24px' }}>💰</span>
+            <h3 style={{ fontSize: '14px', fontWeight: '600', margin: 0 }}>
+              월간 비용 절감액
+            </h3>
+          </div>
+          
+          <div style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '8px' }}>
+            ₩{(liveData.costSavings / 1000).toFixed(0)}K
+          </div>
+          
+          <div style={{ fontSize: '11px', opacity: 0.9 }}>
+            📊 연간 예상: ₩{((liveData.costSavings * 12) / 1000000).toFixed(1)}M
+          </div>
+          
+          <div style={{ 
+            marginTop: '16px', 
+            padding: '12px', 
+            background: 'rgba(255,255,255,0.2)', 
+            borderRadius: '6px',
+            fontSize: '11px'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+              <span>피크/오프피크 차익:</span>
+              <span style={{ fontWeight: '600' }}>₩{(liveData.costSavings * 0.6 / 1000).toFixed(0)}K</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>수요관리 인센티브:</span>
+              <span style={{ fontWeight: '600' }}>₩{(liveData.costSavings * 0.4 / 1000).toFixed(0)}K</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 탄소 저감 기여도 */}
+        <div style={{
+          background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          color: '#fff'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+            <span style={{ fontSize: '24px' }}>🌱</span>
+            <h3 style={{ fontSize: '14px', fontWeight: '600', margin: 0 }}>
+              월간 CO₂ 저감량
+            </h3>
+          </div>
+          
+          <div style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '8px' }}>
+            {liveData.co2Reduction.toFixed(1)}
+            <span style={{ fontSize: '18px', marginLeft: '4px' }}>톤</span>
+          </div>
+          
+          <div style={{ fontSize: '11px', opacity: 0.9 }}>
+            🌍 연간 예상: {(liveData.co2Reduction * 12).toFixed(1)} 톤
+          </div>
+          
+          <div style={{ 
+            marginTop: '16px', 
+            padding: '12px', 
+            background: 'rgba(255,255,255,0.2)', 
+            borderRadius: '6px',
+            fontSize: '11px'
+          }}>
+            <div style={{ marginBottom: '4px' }}>
+              🌳 소나무 {Math.floor(liveData.co2Reduction * 12 * 220)}그루 식재 효과
+            </div>
+            <div>
+              🚗 자동차 {Math.floor(liveData.co2Reduction * 12 / 2.5)}대 연간 배출량 상쇄
+            </div>
+          </div>
+        </div>
+
+        {/* LCOE */}
+        <div style={{
+          background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          color: '#fff'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+            <span style={{ fontSize: '24px' }}>📈</span>
+            <h3 style={{ fontSize: '14px', fontWeight: '600', margin: 0 }}>
+              LCOE (균등화 비용)
+            </h3>
+          </div>
+          
+          <div style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '8px' }}>
+            ₩{liveData.lcoe.toFixed(1)}
+            <span style={{ fontSize: '16px', marginLeft: '4px' }}>/kWh</span>
+          </div>
+          
+          <div style={{ fontSize: '11px', opacity: 0.9, marginBottom: '16px' }}>
+            ⚡ 계통 전력 대비 {((150 - liveData.lcoe) / 150 * 100).toFixed(0)}% 경제적
+          </div>
+          
+          <ResponsiveContainer width="100%" height={60}>
+            <AreaChart data={Array.from({ length: 10 }, (_, i) => ({
+              year: i,
+              lcoe: 140 - i * 1.5 + Math.random() * 5
+            }))}>
+              <defs>
+                <linearGradient id="lcoeGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#ffffff" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#ffffff" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <Area type="monotone" dataKey="lcoe" stroke="#ffffff" fill="url(#lcoeGradient)" strokeWidth={2} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* 4. 운영 및 유지보수 */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px', marginBottom: '20px' }}>
+        
+        {/* 셀 밸런싱 활성화 상태 */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <span style={{ fontSize: '20px' }}>⚖️</span>
+            <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#262626', margin: 0 }}>
+              셀 밸런싱 상태
+            </h3>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '16px' }}>
+            {Array.from({ length: 16 }, (_, i) => {
+              const isBalancing = Math.random() > 0.7;
+              return (
+                <div key={i} style={{
+                  padding: '12px 8px',
+                  background: isBalancing ? '#fff7e6' : '#f6ffed',
+                  border: isBalancing ? '1px solid #faad14' : '1px solid #b7eb8f',
+                  borderRadius: '6px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '10px', color: '#8c8c8c', marginBottom: '4px' }}>
+                    C{i + 1}
+                  </div>
+                  <div style={{ fontSize: '16px' }}>
+                    {isBalancing ? '⚡' : '✅'}
+                  </div>
+                  <div style={{ fontSize: '9px', color: isBalancing ? '#faad14' : '#52c41a', marginTop: '2px' }}>
+                    {isBalancing ? '밸런싱' : '정상'}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ 
+            padding: '12px', 
+            background: '#f0f5ff', 
+            borderRadius: '6px',
+            fontSize: '11px',
+            color: '#595959'
+          }}>
+            <div style={{ fontWeight: '600', marginBottom: '4px' }}>📊 밸런싱 통계 (24h)</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>총 밸런싱 횟수:</span>
+              <span style={{ fontWeight: '600', color: '#1890ff' }}>47회</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>최대 전압 편차:</span>
+              <span style={{ fontWeight: '600', color: '#faad14' }}>58mV</span>
+            </div>
+          </div>
+        </div>
+
+        {/* AI 추천 유지보수 스케줄 */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <span style={{ fontSize: '20px' }}>🤖</span>
+            <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#262626', margin: 0 }}>
+              AI 추천 유지보수 스케줄
+            </h3>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {[
+              { date: '2026. 03. 15', task: '냉각 팬 필터 교체', priority: 'high', icon: '🔴' },
+              { date: '2026. 04. 22', task: 'BMS 펌웨어 업데이트', priority: 'medium', icon: '🟡' },
+              { date: '2026. 05. 10', task: '절연 저항 정밀 측정', priority: 'medium', icon: '🟡' },
+              { date: '2026. 06. 01', task: '셀 밸런싱 회로 점검', priority: 'low', icon: '🟢' },
+            ].map((item, index) => (
+              <div key={index} style={{
+                padding: '12px',
+                background: item.priority === 'high' ? '#fff1f0' : item.priority === 'medium' ? '#fffbe6' : '#f6ffed',
+                border: `1px solid ${item.priority === 'high' ? '#ffa39e' : item.priority === 'medium' ? '#ffe58f' : '#b7eb8f'}`,
+                borderRadius: '6px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                  <span>{item.icon}</span>
+                  <span style={{ fontSize: '12px', fontWeight: '600', color: '#262626' }}>
+                    {item.task}
+                  </span>
+                </div>
+                <div style={{ fontSize: '10px', color: '#8c8c8c', marginLeft: '24px' }}>
+                  📅 예정일: {item.date}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ 
+            marginTop: '16px',
+            padding: '12px', 
+            background: '#e6f7ff', 
+            borderRadius: '6px',
+            fontSize: '11px',
+            color: '#0050b3'
+          }}>
+            💡 AI가 운영 데이터 기반으로 최적 점검 시기를 자동 제안합니다
+          </div>
+        </div>
+
+        {/* 주변 환경 상관관계 분석 */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          gridColumn: 'span 2'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <span style={{ fontSize: '20px' }}>🌡️</span>
+            <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#262626', margin: 0 }}>
+              주변 환경 상관관계 분석
+            </h3>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '20px' }}>
+            {/* 환경 지표 */}
+            <div>
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '11px', color: '#8c8c8c', marginBottom: '4px' }}>외부 온도</div>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#fa8c16' }}>
+                  28.5°C
+                </div>
+              </div>
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '11px', color: '#8c8c8c', marginBottom: '4px' }}>외부 습도</div>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#13c2c2' }}>
+                  62%
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '11px', color: '#8c8c8c', marginBottom: '4px' }}>랙 내부 온도</div>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#f5222d' }}>
+                  {liveData.temperature.toFixed(1)}°C
+                </div>
+              </div>
+              
+              <div style={{ 
+                marginTop: '16px',
+                padding: '12px', 
+                background: '#f6ffed', 
+                borderRadius: '6px',
+                fontSize: '10px',
+                color: '#52c41a'
+              }}>
+                ✅ HVAC 시스템 적정 가동 중
+              </div>
+            </div>
+
+            {/* 상관관계 차트 */}
+            <div>
+              <ResponsiveContainer width="100%" height={200}>
+                <LineChart data={Array.from({ length: 24 }, (_, i) => ({
+                  hour: `${i}h`,
+                  외부온도: 20 + Math.sin(i * Math.PI / 12) * 8 + Math.random() * 2,
+                  랙온도: 23 + Math.sin(i * Math.PI / 12) * 3 + Math.random() * 1.5,
+                }))}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="hour" stroke="#8c8c8c" style={{ fontSize: '10px' }} />
+                  <YAxis domain={[15, 35]} stroke="#8c8c8c" style={{ fontSize: '10px' }} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      background: '#fff', 
+                      border: '1px solid #d9d9d9', 
+                      borderRadius: '4px',
+                      fontSize: '11px'
+                    }}
+                  />
+                  <Line type="monotone" dataKey="외부온도" stroke="#fa8c16" strokeWidth={2} dot={false} name="외부 온도" />
+                  <Line type="monotone" dataKey="랙온도" stroke="#f5222d" strokeWidth={2} dot={false} name="랙 내부 온도" />
+                </LineChart>
+              </ResponsiveContainer>
+              
+              <div style={{ fontSize: '10px', color: '#8c8c8c', marginTop: '8px' }}>
+                📊 외부 온도와 랙 온도의 상관계수: 0.87 (강한 양의 상관관계)
+              </div>
             </div>
           </div>
         </div>
