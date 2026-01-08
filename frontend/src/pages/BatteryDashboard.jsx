@@ -310,12 +310,8 @@ const BatteryDashboard = () => {
               background: `linear-gradient(to top, 
                 ${liveData.soc > 80 ? '#52c41a' : liveData.soc > 50 ? '#faad14' : '#f5222d'}, 
                 ${liveData.soc > 80 ? '#95de64' : liveData.soc > 50 ? '#ffd666' : '#ff7875'})`,
-              transition: 'height 1s ease, background 0.5s ease',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              transition: 'height 1s ease, background 0.5s ease'
             }}>
-              <Battery size={60} style={{ color: '#fff', opacity: 0.9 }} />
             </div>
             
             {/* 충전 퍼센트 표시 */}
@@ -324,10 +320,10 @@ const BatteryDashboard = () => {
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              fontSize: '32px',
+              fontSize: '36px',
               fontWeight: 'bold',
-              color: liveData.soc < 50 ? '#262626' : '#fff',
-              textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+              color: '#fff',
+              textShadow: '0 2px 8px rgba(0,0,0,0.4)',
               zIndex: 10
             }}>
               {liveData.soc.toFixed(1)}%
