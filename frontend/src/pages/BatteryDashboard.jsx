@@ -4,7 +4,7 @@ import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Cartesia
 
 const BatteryDashboard = () => {
   const [time, setTime] = useState(new Date());
-  const [showAdvancedDiagnostics, setShowAdvancedDiagnostics] = useState(false);
+  const [activeTab, setActiveTab] = useState('monitor'); // 'monitor', 'safety', 'performance', 'economics', 'operation'
   const [liveData, setLiveData] = useState({
     soh: 97.1,
     soc: 99.0,
@@ -710,66 +710,94 @@ const BatteryDashboard = () => {
         </div>
       </div>
 
-      {/* 심화 진단 섹션 토글 버튼 */}
+      {/* 탭 네비게이션 */}
       <div style={{ marginTop: '20px' }}>
-        <button
-          onClick={() => setShowAdvancedDiagnostics(!showAdvancedDiagnostics)}
-          style={{
-            width: '100%',
-            padding: '16px 24px',
-            background: showAdvancedDiagnostics ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
-            border: 'none',
-            borderRadius: '8px',
-            color: '#fff',
-            fontSize: '16px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            transition: 'all 0.3s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.2)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontSize: '24px' }}>🔬</span>
-            <span>심화 진단 및 운영 지표</span>
-            <span style={{ 
-              background: 'rgba(255,255,255,0.2)', 
-              padding: '4px 12px', 
-              borderRadius: '12px',
-              fontSize: '12px',
-              fontWeight: '500'
-            }}>
-              {showAdvancedDiagnostics ? '접기' : '펼치기'}
-            </span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '12px', opacity: 0.9 }}>
-              4개 카테고리 · 20개 지표
-            </span>
-            {showAdvancedDiagnostics ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
-          </div>
-        </button>
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '8px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          display: 'flex',
+          gap: '8px',
+          overflowX: 'auto'
+        }}>
+          {[
+            { id: 'monitor', icon: '📊', label: '실시간 모니터링', color: '#1890ff' },
+            { id: 'safety', icon: '🔥', label: '안전 및 리스크', color: '#f5222d' },
+            { id: 'performance', icon: '⚙️', label: '성능 분석', color: '#13c2c2' },
+            { id: 'economics', icon: '💰', label: '경제성/환경', color: '#52c41a' },
+            { id: 'operation', icon: '🔧', label: '운영/유지보수', color: '#722ed1' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                flex: '1',
+                minWidth: '140px',
+                padding: '12px 16px',
+                background: activeTab === tab.id 
+                  ? `linear-gradient(135deg, ${tab.color} 0%, ${tab.color}dd 100%)` 
+                  : '#f5f5f5',
+                border: 'none',
+                borderRadius: '6px',
+                color: activeTab === tab.id ? '#fff' : '#595959',
+                fontSize: '14px',
+                fontWeight: activeTab === tab.id ? '600' : '500',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                boxShadow: activeTab === tab.id ? '0 2px 8px rgba(0,0,0,0.15)' : 'none'
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== tab.id) {
+                  e.currentTarget.style.background = '#e8e8e8';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== tab.id) {
+                  e.currentTarget.style.background = '#f5f5f5';
+                }
+              }}
+            >
+              <span style={{ fontSize: '18px' }}>{tab.icon}</span>
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* 심화 진단 섹션 내용 (토글) */}
-      {showAdvancedDiagnostics && (
-        <div style={{
-          marginTop: '20px',
-          animation: 'slideDown 0.3s ease-out'
-        }}>
+      {/* 탭 콘텐츠 */}
+      <div style={{ marginTop: '20px' }}>
+        
+        {/* 탭 1: 실시간 모니터링 */}
+        {activeTab === 'monitor' && (
+          <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+            {/* 기존 대시보드 내용이 여기 표시됨 (이미 위에 렌더링되어 있으므로 메시지만) */}
+            <div style={{
+              background: '#fff',
+              borderRadius: '8px',
+              padding: '24px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>📊</div>
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#262626', marginBottom: '8px' }}>
+                실시간 모니터링
+              </h3>
+              <p style={{ fontSize: '14px', color: '#8c8c8c', margin: 0 }}>
+                위의 대시보드에서 SOH, SOC, 배터리 정보, RUL 예측 등 실시간 모니터링 데이터를 확인할 수 있습니다.
+              </p>
+            </div>
+          </div>
+        )}
 
-      {/* 1. 안전 및 리스크 관리 */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '20px' }}>
+        {/* 탭 2: 안전 및 리스크 관리 */}
+        {activeTab === 'safety' && (
+          <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
         
         {/* 열폭주 위험 지수 */}
         <div style={{
@@ -915,8 +943,15 @@ const BatteryDashboard = () => {
           </div>
         </div>
       </div>
+            </div>
+          </div>
+        )}
 
-      {/* 2. 정밀 노화 및 성능 진단 */}
+        {/* 탭 3: 정밀 노화 및 성능 진단 */}
+        {activeTab === 'performance' && (
+          <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+
+      {/* 성능 진단 섹션 */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px', marginBottom: '20px' }}>
         
         {/* 내부 저항 변화 추이 */}
@@ -1054,8 +1089,14 @@ const BatteryDashboard = () => {
           </div>
         </div>
       </div>
+          </div>
+        )}
 
-      {/* 3. 경제성 및 환경 지표 */}
+        {/* 탭 4: 경제성 및 환경 지표 */}
+        {activeTab === 'economics' && (
+          <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+
+      {/* 경제성 및 환경 섹션 */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '20px' }}>
         
         {/* 비용 절감액 */}
@@ -1179,8 +1220,14 @@ const BatteryDashboard = () => {
           </ResponsiveContainer>
         </div>
       </div>
+          </div>
+        )}
 
-      {/* 4. 운영 및 유지보수 */}
+        {/* 탭 5: 운영 및 유지보수 */}
+        {activeTab === 'operation' && (
+          <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+
+      {/* 운영 및 유지보수 섹션 */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px', marginBottom: '20px' }}>
         
         {/* 셀 밸런싱 활성화 상태 */}
@@ -1373,9 +1420,10 @@ const BatteryDashboard = () => {
           </div>
         </div>
       </div>
-      
+          </div>
+        )}
+
       </div>
-      )}
 
       <style>
         {`
