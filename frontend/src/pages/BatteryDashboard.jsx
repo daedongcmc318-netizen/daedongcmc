@@ -1,19 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Zap, Clock, AlertTriangle, TrendingUp, Cpu, Battery, Thermometer, Grid, BarChart3, Waves, ArrowUpCircle, ArrowDownCircle, Gauge } from 'lucide-react';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadialBarChart, RadialBar, PieChart, Pie, Cell, ComposedChart, Scatter, ScatterChart, ZAxis } from 'recharts';
+import { Activity, Zap, Clock, AlertTriangle, TrendingUp, Cpu, Battery, Thermometer, Grid as GridIcon, BarChart3, Waves, ArrowUpCircle, ArrowDownCircle, Gauge, Power } from 'lucide-react';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadialBarChart, RadialBar, Legend } from 'recharts';
 
 const BatteryDashboard = () => {
   const [time, setTime] = useState(new Date());
   const [liveData, setLiveData] = useState({
-    soh: 92,
-    soc: 75,
-    rul: 450,
-    temperature: 38.5,
-    voltage: 3.85,
-    current: 2.4,
-    power: 9.24, // kW
-    cycleCount: 2450,
-    efficiency: 94.5,
+    soh: 97.1,
+    evSoh: 98.5,
+    sop: 98.7,
+    sob: 100.0,
+    soc: 99.0,
+    temperature: 25,
+    voltage: 406.7,
+    current: 1.5,
+    power: 2816,
+    chargeEnergy: 1018.7,
+    dischargeEnergy: 998.8,
+    efficiency: 8.7,
+    cycleCount: 4955753,
+    totalDistance: 17429,
+    maxTemp: 24,
+    minTemp: 23,
   });
 
   // 실시간 데이터 애니메이션
@@ -21,1107 +28,465 @@ const BatteryDashboard = () => {
     const timer = setInterval(() => {
       setTime(new Date());
       setLiveData(prev => ({
-        soh: Math.max(85, Math.min(98, prev.soh + (Math.random() - 0.5) * 0.5)),
-        soc: Math.max(60, Math.min(95, prev.soc + (Math.random() - 0.5) * 2)),
-        rul: Math.max(400, Math.min(500, prev.rul + (Math.random() - 0.5) * 5)),
-        temperature: Math.max(35, Math.min(42, prev.temperature + (Math.random() - 0.5) * 0.8)),
-        voltage: Math.max(3.7, Math.min(4.2, prev.voltage + (Math.random() - 0.5) * 0.05)),
-        current: Math.max(1.8, Math.min(3.2, prev.current + (Math.random() - 0.5) * 0.2)),
-        power: Math.max(6, Math.min(12, prev.power + (Math.random() - 0.5) * 0.3)),
-        cycleCount: prev.cycleCount,
-        efficiency: Math.max(90, Math.min(98, prev.efficiency + (Math.random() - 0.5) * 0.5)),
+        ...prev,
+        soh: Math.max(95, Math.min(99, prev.soh + (Math.random() - 0.5) * 0.2)),
+        evSoh: Math.max(96, Math.min(99.5, prev.evSoh + (Math.random() - 0.5) * 0.2)),
+        soc: Math.max(95, Math.min(100, prev.soc + (Math.random() - 0.5) * 0.5)),
+        temperature: Math.max(23, Math.min(27, prev.temperature + (Math.random() - 0.5) * 0.3)),
+        voltage: Math.max(400, Math.min(410, prev.voltage + (Math.random() - 0.5) * 2)),
+        current: Math.max(1, Math.min(2, prev.current + (Math.random() - 0.5) * 0.1)),
       }));
     }, 2000);
 
     return () => clearInterval(timer);
   }, []);
 
-  // 실시간 차트 데이터
-  const [realtimeData, setRealtimeData] = useState([]);
-  
-  useEffect(() => {
-    const generateData = () => {
-      const newData = Array.from({ length: 30 }, (_, i) => ({
-        time: `${i}s`,
-        temperature: 35 + Math.sin(i * 0.3) * 4 + Math.random() * 2,
-        voltage: 3.75 + Math.sin(i * 0.2) * 0.25 + Math.random() * 0.08,
-        current: 2.0 + Math.sin(i * 0.4) * 0.8 + Math.random() * 0.3,
-        power: 8 + Math.sin(i * 0.25) * 2 + Math.random() * 1,
-      }));
-      setRealtimeData(newData);
-    };
-    
-    generateData();
-    const interval = setInterval(generateData, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // ESS 셀 전압 데이터 (16셀)
-  const cellVoltages = Array.from({ length: 16 }, (_, i) => ({
-    cell: `셀${i + 1}`,
-    voltage: 3.7 + Math.random() * 0.3,
-    status: Math.random() > 0.1 ? 'normal' : 'warning'
+  // 전력 수명 예측 데이터 (7일)
+  const healthTrendData = Array.from({ length: 7 }, (_, i) => ({
+    day: `${i + 1}일`,
+    실제운행: 97 - i * 0.3 + Math.random() * 0.5,
+    시뮬레이션: 96.5 - i * 0.25 + Math.random() * 0.5,
   }));
 
-  // 온도 분포 데이터 (8개 센서)
-  const temperatureDistribution = Array.from({ length: 8 }, (_, i) => ({
-    sensor: `T${i + 1}`,
-    temp: 36 + Math.random() * 6,
-  }));
-
-  // 충방전 사이클 히스토리
-  const cycleHistory = Array.from({ length: 24 }, (_, i) => ({
-    hour: `${i}h`,
-    charge: Math.random() * 100,
-    discharge: Math.random() * 80,
-  }));
-
-  // 에너지 효율 데이터
-  const efficiencyData = [
-    { name: '충전 효율', value: 95, fill: '#00ff88' },
-    { name: '방전 효율', value: 93, fill: '#00ffcc' },
-    { name: '손실', value: 7, fill: '#1a2942' },
+  // 배터리 정보 데이터
+  const batteryDetails = [
+    { icon: '🌡️', label: '배터리 온도', value: `${liveData.temperature}`, unit: '℃', color: '#1890ff' },
+    { icon: '⚡', label: '셀 전압', value: `${liveData.voltage.toFixed(1)}`, unit: 'V', color: '#52c41a' },
+    { icon: '🔌', label: '전류', value: `${liveData.current.toFixed(1)}`, unit: 'A', color: '#faad14' },
+    { icon: '💡', label: '출력', value: `${liveData.power}`, unit: 'kΩ', color: '#f5222d' },
   ];
 
-  // 셀 밸런싱 상태 (셀별 전압 편차)
-  const cellBalancingData = Array.from({ length: 16 }, (_, i) => {
-    const baseVoltage = 3.85;
-    const deviation = (Math.random() - 0.5) * 0.15;
-    return {
-      cell: i + 1,
-      voltage: baseVoltage + deviation,
-      deviation: deviation * 1000, // mV로 변환
-      status: Math.abs(deviation) < 0.05 ? 'excellent' : Math.abs(deviation) < 0.08 ? 'good' : 'warning'
-    };
-  });
+  // 충전 정보
+  const chargeInfo = [
+    { icon: '⬆️', label: '충전량', value: `${liveData.chargeEnergy.toFixed(1)}`, unit: 'kWh', color: '#13c2c2' },
+    { icon: '⬇️', label: '방전량', value: `${liveData.dischargeEnergy.toFixed(1)}`, unit: 'kWh', color: '#722ed1' },
+  ];
 
-  // SOH/SOC 히스토리 트렌드 (7일)
-  const [healthTrend, setHealthTrend] = useState([]);
-  
-  useEffect(() => {
-    const trendData = Array.from({ length: 7 }, (_, i) => ({
-      day: `Day ${i + 1}`,
-      soh: 92 - (i * 0.3) + (Math.random() - 0.5) * 0.5,
-      soc_avg: 75 + (Math.random() - 0.5) * 8,
-      cycles: 2450 - (7 - i) * 3,
-    }));
-    setHealthTrend(trendData);
-  }, []);
-
-  // 에너지 효율 트렌드 (24시간)
-  const efficiencyTrend = Array.from({ length: 24 }, (_, i) => ({
-    hour: `${i}h`,
-    charge_eff: 92 + Math.sin(i * 0.3) * 3 + Math.random() * 2,
-    discharge_eff: 90 + Math.sin(i * 0.25) * 3 + Math.random() * 2,
-    roundtrip_eff: 85 + Math.sin(i * 0.2) * 4 + Math.random() * 2,
-  }));
-
-  // 셀 온도 히트맵 데이터 (4x4 그리드)
-  const cellTempHeatmap = Array.from({ length: 16 }, (_, i) => {
-    const row = Math.floor(i / 4);
-    const col = i % 4;
-    const baseTemp = 38;
-    // 중앙부가 더 뜨거운 패턴
-    const centerDistance = Math.sqrt(Math.pow(row - 1.5, 2) + Math.pow(col - 1.5, 2));
-    const temp = baseTemp + (2 - centerDistance) * 2 + Math.random() * 2;
-    return {
-      row,
-      col,
-      cell: i + 1,
-      temp: temp,
-      x: col,
-      y: row,
-    };
-  });
-
-  // 전력 흐름 상태
-  const [powerFlow, setPowerFlow] = useState({
-    mode: 'charging', // charging, discharging, idle
-    rate: 9.2,
-    grid_power: 12.5,
-    load_power: 3.3,
-  });
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const modes = ['charging', 'discharging', 'idle'];
-      const randomMode = modes[Math.floor(Math.random() * modes.length)];
-      setPowerFlow({
-        mode: randomMode,
-        rate: Math.random() * 10 + 5,
-        grid_power: Math.random() * 15 + 5,
-        load_power: Math.random() * 8 + 2,
-      });
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // 이상탐지 히트맵 (24시간 x 7일)
-  const anomalyHeatmap = Array.from({ length: 7 }, (_, day) => {
-    return Array.from({ length: 24 }, (_, hour) => ({
-      day: `D${day + 1}`,
-      hour: hour,
-      anomaly_score: Math.random() * 100,
-      level: Math.random() > 0.9 ? 'high' : Math.random() > 0.7 ? 'medium' : 'low'
-    }));
-  }).flat();
-
-  // AI 예측 수명 데이터
-  const lifeCurveData = Array.from({ length: 12 }, (_, i) => ({
-    month: `${i + 1}`,
-    predicted: 100 - (i * 8) - Math.random() * 5,
-    actual: 100 - (i * 7) - Math.random() * 3,
-    threshold: 80,
-  }));
-
-  // AI 진단 로그
-  const [aiLogs, setAiLogs] = useState([
-    { id: 1, time: '14:32:15', level: 'info', message: 'ESS 배터리 팩 상태 정상 - SOH 92%', icon: '✓', category: 'status' },
-    { id: 2, time: '14:31:48', level: 'warning', message: '셀 4번 전압 불균형 감지 (-0.05V)', icon: '⚠', category: 'cell' },
-    { id: 3, time: '14:30:22', level: 'info', message: 'AI 분석 완료 - RUL 450 사이클 예측', icon: '🤖', category: 'ai' },
-    { id: 4, time: '14:28:56', level: 'success', message: '셀 밸런싱 완료 - 효율 +3.2% 향상', icon: '⚡', category: 'balance' },
-    { id: 5, time: '14:25:11', level: 'warning', message: 'ESS 유지보수 권장 시기: 30일 후', icon: '🔧', category: 'maintenance' },
-    { id: 6, time: '14:20:33', level: 'info', message: '열관리 시스템 작동 중 - 온도 안정화', icon: '🌡', category: 'thermal' },
-  ]);
-
-  useEffect(() => {
-    const logMessages = [
-      { level: 'info', message: 'ESS 배터리 온도 안정화 진행 중', icon: '🌡', category: 'thermal' },
-      { level: 'success', message: '에너지 변환 효율 최적화 완료', icon: '⚡', category: 'efficiency' },
-      { level: 'warning', message: '셀 밸런싱 필요 - 전압 편차 0.08V', icon: '⚠', category: 'balance' },
-      { level: 'info', message: 'AI 모델 재학습 완료 - 정확도 95.2%', icon: '🤖', category: 'ai' },
-      { level: 'success', message: 'BMS 시스템 정상 작동 중', icon: '✓', category: 'bms' },
-      { level: 'warning', message: '순환 전류 미세 증가 감지', icon: '⚠', category: 'current' },
-    ];
-
-    const interval = setInterval(() => {
-      const randomLog = logMessages[Math.floor(Math.random() * logMessages.length)];
-      const newLog = {
-        id: Date.now(),
-        time: new Date().toLocaleTimeString('ko-KR'),
-        ...randomLog,
-      };
-      setAiLogs(prev => [newLog, ...prev.slice(0, 9)]);
-    }, 8000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // SOC 게이지 데이터
-  const socGaugeData = [
-    { name: 'SOC', value: liveData.soc, fill: '#00ffcc' },
+  // 원형 게이지용 데이터 생성
+  const createGaugeData = (value, color) => [
+    { name: 'value', value: value, fill: color },
+    { name: 'empty', value: 100 - value, fill: '#e8e8e8' }
   ];
 
   return (
     <div style={{ 
       minHeight: '100vh', 
-      background: 'linear-gradient(to bottom right, #0a1628, #0f1f3a, #0a1628)',
-      padding: '6px',
-      color: '#fff'
+      background: '#f0f2f5',
+      padding: '20px',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
     }}>
-      {/* Header - Extreme Compact */}
-      <header style={{ marginBottom: '4px' }}>
-        <div className="header-container" style={{ 
+      {/* 헤더 */}
+      <div style={{
+        background: '#fff',
+        padding: '16px 24px',
+        borderRadius: '8px',
+        marginBottom: '20px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '12px'
+      }}>
+        <div>
+          <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff', margin: 0 }}>
+            전력 수명 예측
+          </h1>
+        </div>
+        <div style={{ 
           display: 'flex', 
-          flexDirection: 'column',
-          gap: '4px'
+          alignItems: 'center', 
+          gap: '20px',
+          color: '#595959',
+          fontSize: '14px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            <Battery className="battery-icon" size={20} style={{ color: '#00ffcc', flexShrink: 0 }} />
-            <div style={{ flex: '1', minWidth: '200px' }}>
-              <h1 style={{ 
-                fontSize: 'clamp(14px, 3.5vw, 20px)', 
-                fontWeight: 'bold', 
-                background: 'linear-gradient(to right, #00ffcc, #00ff88)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                marginBottom: '2px',
-                lineHeight: '1.2'
-              }}>
-                B-Nexus AI - ESS
-              </h1>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 2vw, 11px)' }}>Energy Storage System Battery Monitoring</p>
+          <div>
+            <Clock size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+            {time.toLocaleTimeString('ko-KR')}
+          </div>
+          <div style={{
+            background: '#f0f9ff',
+            padding: '6px 16px',
+            borderRadius: '4px',
+            color: '#1890ff',
+            fontWeight: '600'
+          }}>
+            실시간 모니터링
+          </div>
+        </div>
+      </div>
+
+      {/* 메인 대시보드 */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+        
+        {/* 좌측: 전력 수명 예측 차트 */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          gridColumn: 'span 2'
+        }}>
+          <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#262626', marginBottom: '20px' }}>
+            전력 수명 예측
+          </h2>
+          <div style={{ display: 'flex', gap: '16px', marginBottom: '12px', fontSize: '13px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '12px', height: '12px', background: '#1890ff', borderRadius: '50%', display: 'inline-block' }}></span>
+              <span style={{ color: '#595959' }}>실제 운행</span>
             </div>
-            <div className="status-badge" style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '6px', 
-              padding: '4px 8px',
-              background: 'rgba(0, 255, 204, 0.1)',
-              borderRadius: '6px',
-              border: '1px solid rgba(0, 255, 204, 0.3)',
-              fontSize: 'clamp(9px, 2vw, 11px)'
-            }}>
-              <div style={{ 
-                width: '8px', 
-                height: '8px', 
-                borderRadius: '50%', 
-                background: '#00ff88',
-                animation: 'pulse 2s ease-in-out infinite',
-                flexShrink: 0
-              }}></div>
-              <span style={{ color: '#00ff88', fontWeight: '500', whiteSpace: 'nowrap' }}>
-                실시간 모니터링
-              </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '12px', height: '12px', background: '#52c41a', borderRadius: '50%', display: 'inline-block' }}></span>
+              <span style={{ color: '#595959' }}>시뮬 운행</span>
             </div>
           </div>
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '6px 8px',
-            background: 'rgba(0, 0, 0, 0.3)',
-            borderRadius: '6px'
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={healthTrendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="day" stroke="#8c8c8c" style={{ fontSize: '12px' }} />
+              <YAxis domain={[90, 100]} stroke="#8c8c8c" style={{ fontSize: '12px' }} />
+              <Tooltip 
+                contentStyle={{ 
+                  background: '#fff', 
+                  border: '1px solid #d9d9d9', 
+                  borderRadius: '4px',
+                  fontSize: '12px'
+                }} 
+              />
+              <Line 
+                type="monotone" 
+                dataKey="실제운행" 
+                stroke="#1890ff" 
+                strokeWidth={3}
+                dot={{ fill: '#1890ff', r: 4 }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="시뮬레이션" 
+                stroke="#52c41a" 
+                strokeWidth={3}
+                dot={{ fill: '#52c41a', r: 4 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* 우측 상단: 큰 원형 게이지들 */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '16px'
+        }}>
+          {/* SOH 게이지 */}
+          <div style={{
+            background: '#fff',
+            borderRadius: '8px',
+            padding: '20px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+            textAlign: 'center'
           }}>
-            <div>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(8px, 1.5vw, 10px)' }}>System Time</p>
-              <p style={{ color: '#00ffcc', fontSize: 'clamp(11px, 2vw, 13px)', fontFamily: 'monospace', fontWeight: '600' }}>
-                {time.toLocaleTimeString('ko-KR')}
-              </p>
+            <div style={{ fontSize: '13px', color: '#8c8c8c', marginBottom: '8px', fontWeight: '500' }}>
+              SOH
+            </div>
+            <div style={{ fontSize: '11px', color: '#bfbfbf', marginBottom: '12px' }}>
+              ESS수명
+            </div>
+            <ResponsiveContainer width="100%" height={120}>
+              <RadialBarChart 
+                innerRadius="70%" 
+                outerRadius="100%" 
+                data={createGaugeData(liveData.soh, '#1890ff')}
+                startAngle={180}
+                endAngle={0}
+              >
+                <RadialBar dataKey="value" cornerRadius={10} />
+              </RadialBarChart>
+            </ResponsiveContainer>
+            <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#1890ff', marginTop: '-60px' }}>
+              {liveData.soh.toFixed(1)}
+              <span style={{ fontSize: '16px', color: '#8c8c8c', marginLeft: '4px' }}>%</span>
+            </div>
+          </div>
+
+          {/* EV_SOH 게이지 */}
+          <div style={{
+            background: '#fff',
+            borderRadius: '8px',
+            padding: '20px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '13px', color: '#8c8c8c', marginBottom: '8px', fontWeight: '500' }}>
+              EV_SOH
+            </div>
+            <div style={{ fontSize: '11px', color: '#bfbfbf', marginBottom: '12px' }}>
+              EV_단자수명
+            </div>
+            <ResponsiveContainer width="100%" height={120}>
+              <RadialBarChart 
+                innerRadius="70%" 
+                outerRadius="100%" 
+                data={createGaugeData(liveData.evSoh, '#52c41a')}
+                startAngle={180}
+                endAngle={0}
+              >
+                <RadialBar dataKey="value" cornerRadius={10} />
+              </RadialBarChart>
+            </ResponsiveContainer>
+            <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#52c41a', marginTop: '-60px' }}>
+              {liveData.evSoh.toFixed(1)}
+              <span style={{ fontSize: '16px', color: '#8c8c8c', marginLeft: '4px' }}>%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 배터리 상세 정보 */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          gridColumn: 'span 2'
+        }}>
+          <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#262626', marginBottom: '20px' }}>
+            배터리 정보
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px' }}>
+            {batteryDetails.map((item, index) => (
+              <div key={index} style={{
+                textAlign: 'center',
+                padding: '16px',
+                background: '#fafafa',
+                borderRadius: '6px',
+                border: '1px solid #f0f0f0'
+              }}>
+                <div style={{ fontSize: '24px', marginBottom: '8px' }}>{item.icon}</div>
+                <div style={{ fontSize: '12px', color: '#8c8c8c', marginBottom: '8px' }}>{item.label}</div>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', color: item.color }}>
+                  {item.value}
+                  <span style={{ fontSize: '14px', color: '#8c8c8c', marginLeft: '4px' }}>{item.unit}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 배터리 상태 (중앙 이미지 영역) */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: '14px', color: '#8c8c8c', marginBottom: '12px' }}>충전상태</div>
+          <div style={{
+            position: 'relative',
+            width: '100%',
+            height: '160px',
+            background: 'linear-gradient(to right, #e6f7ff, #bae7ff)',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '16px'
+          }}>
+            <Battery size={80} style={{ color: '#1890ff' }} />
+            <div style={{
+              position: 'absolute',
+              bottom: '12px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              fontSize: '28px',
+              fontWeight: 'bold',
+              color: '#1890ff'
+            }}>
+              {liveData.soc.toFixed(1)}%
+            </div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '12px' }}>
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ color: '#8c8c8c', marginBottom: '4px' }}>🔥 모델 Max 온도</div>
+              <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#f5222d' }}>{liveData.maxTemp}°C</div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(8px, 1.5vw, 10px)' }}>Cycle Count</p>
-              <p style={{ color: '#00ffcc', fontSize: 'clamp(11px, 2vw, 13px)', fontFamily: 'monospace', fontWeight: '600' }}>
+              <div style={{ color: '#8c8c8c', marginBottom: '4px' }}>❄️ 모델 Min 온도</div>
+              <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#1890ff' }}>{liveData.minTemp}°C</div>
+            </div>
+          </div>
+        </div>
+
+        {/* 배터리 세부 정보 (우측) */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+        }}>
+          <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#262626', marginBottom: '20px' }}>
+            배터리 상태
+          </h2>
+          
+          {/* SOP & SOB 작은 게이지 */}
+          <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '24px' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '12px', color: '#8c8c8c', marginBottom: '8px' }}>SOP</div>
+              <div style={{ fontSize: '11px', color: '#bfbfbf', marginBottom: '8px' }}>출력전력</div>
+              <ResponsiveContainer width={80} height={80}>
+                <RadialBarChart 
+                  innerRadius="60%" 
+                  outerRadius="100%" 
+                  data={createGaugeData(liveData.sop, '#13c2c2')}
+                  startAngle={180}
+                  endAngle={0}
+                >
+                  <RadialBar dataKey="value" cornerRadius={5} />
+                </RadialBarChart>
+              </ResponsiveContainer>
+              <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#13c2c2', marginTop: '-50px' }}>
+                {liveData.sop.toFixed(1)}
+                <span style={{ fontSize: '12px', color: '#8c8c8c' }}>%</span>
+              </div>
+            </div>
+            
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '12px', color: '#8c8c8c', marginBottom: '8px' }}>SOB</div>
+              <div style={{ fontSize: '11px', color: '#bfbfbf', marginBottom: '8px' }}>균형성</div>
+              <ResponsiveContainer width={80} height={80}>
+                <RadialBarChart 
+                  innerRadius="60%" 
+                  outerRadius="100%" 
+                  data={createGaugeData(liveData.sob, '#722ed1')}
+                  startAngle={180}
+                  endAngle={0}
+                >
+                  <RadialBar dataKey="value" cornerRadius={5} />
+                </RadialBarChart>
+              </ResponsiveContainer>
+              <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#722ed1', marginTop: '-50px' }}>
+                {liveData.sob.toFixed(1)}
+                <span style={{ fontSize: '12px', color: '#8c8c8c' }}>%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 충방전 정보 */}
+          <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '16px' }}>
+            {chargeInfo.map((item, index) => (
+              <div key={index} style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '12px 0',
+                borderBottom: index < chargeInfo.length - 1 ? '1px solid #f0f0f0' : 'none'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '18px' }}>{item.icon}</span>
+                  <span style={{ fontSize: '13px', color: '#595959' }}>{item.label}</span>
+                </div>
+                <div style={{ fontSize: '18px', fontWeight: 'bold', color: item.color }}>
+                  {item.value}
+                  <span style={{ fontSize: '12px', color: '#8c8c8c', marginLeft: '4px' }}>{item.unit}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 이상상태 */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+        }}>
+          <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#262626', marginBottom: '20px' }}>
+            이상상태
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '12px',
+              background: '#f6ffed',
+              borderRadius: '6px',
+              border: '1px solid #b7eb8f'
+            }}>
+              <div style={{ fontSize: '20px' }}>✅</div>
+              <div>
+                <div style={{ fontSize: '13px', color: '#52c41a', fontWeight: '600' }}>정상</div>
+                <div style={{ fontSize: '11px', color: '#8c8c8c' }}>모든 시스템 정상 작동</div>
+              </div>
+            </div>
+            <div style={{
+              padding: '12px',
+              background: '#fafafa',
+              borderRadius: '6px',
+              fontSize: '12px',
+              color: '#8c8c8c',
+              textAlign: 'center'
+            }}>
+              마지막 점검: {time.toLocaleDateString('ko-KR')}
+            </div>
+          </div>
+        </div>
+
+        {/* 통계 정보 */}
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+        }}>
+          <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#262626', marginBottom: '20px' }}>
+            운영 통계
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ textAlign: 'center', padding: '16px', background: '#e6f7ff', borderRadius: '6px' }}>
+              <div style={{ fontSize: '12px', color: '#1890ff', marginBottom: '8px', fontWeight: '500' }}>
+                효율성
+              </div>
+              <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#1890ff' }}>
+                {liveData.efficiency}
+                <span style={{ fontSize: '14px', color: '#8c8c8c', marginLeft: '4px' }}>km/kWh</span>
+              </div>
+            </div>
+            
+            <div style={{ textAlign: 'center', padding: '16px', background: '#f6ffed', borderRadius: '6px' }}>
+              <div style={{ fontSize: '12px', color: '#52c41a', marginBottom: '8px', fontWeight: '500' }}>
+                총 사이클
+              </div>
+              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#52c41a' }}>
                 {liveData.cycleCount.toLocaleString()}
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* 핵심 지표 카드 - Extreme Compact */}
-      <div style={{
-        background: '#0f1f3a',
-        borderRadius: '8px',
-        padding: '4px',
-        border: '1px solid rgba(0, 255, 204, 0.3)',
-        marginBottom: '4px'
-      }}>
-        <div className="metrics-grid" style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(70px, 1fr))', 
-          gap: '4px'
-        }}>
-          {/* SOH */}
-          <div style={{ textAlign: 'center', padding: '4px', background: 'rgba(0, 255, 136, 0.05)', borderRadius: '6px', border: '1px solid rgba(0, 255, 136, 0.2)' }}>
-            <Battery size={16} style={{ color: '#00ff88', marginBottom: '2px' }} />
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(7px, 1.2vw, 8px)', marginBottom: '1px' }}>SOH</p>
-            <p style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontWeight: 'bold', color: '#00ff88', lineHeight: '1' }}>
-              {liveData.soh.toFixed(1)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>%</span>
-            </p>
-          </div>
-
-          {/* SOC */}
-          <div style={{ textAlign: 'center', padding: '4px', background: 'rgba(0, 255, 204, 0.05)', borderRadius: '6px', border: '1px solid rgba(0, 255, 204, 0.2)' }}>
-            <Zap size={16} style={{ color: '#00ffcc', marginBottom: '2px' }} />
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(7px, 1.2vw, 8px)', marginBottom: '1px' }}>SOC</p>
-            <p style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontWeight: 'bold', color: '#00ffcc', lineHeight: '1' }}>
-              {liveData.soc.toFixed(1)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>%</span>
-            </p>
-          </div>
-
-          {/* Power */}
-          <div style={{ textAlign: 'center', padding: '4px', background: 'rgba(0, 255, 204, 0.05)', borderRadius: '6px', border: '1px solid rgba(0, 255, 204, 0.2)' }}>
-            <Activity size={16} style={{ color: '#00ffcc', marginBottom: '2px' }} />
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(7px, 1.2vw, 8px)', marginBottom: '1px' }}>Power</p>
-            <p style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontWeight: 'bold', color: '#00ffcc', lineHeight: '1' }}>
-              {liveData.power.toFixed(1)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>kW</span>
-            </p>
-          </div>
-
-          {/* Efficiency */}
-          <div style={{ textAlign: 'center', padding: '4px', background: 'rgba(250, 204, 21, 0.05)', borderRadius: '6px', border: '1px solid rgba(250, 204, 21, 0.2)' }}>
-            <TrendingUp size={16} style={{ color: '#facc15', marginBottom: '2px' }} />
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(7px, 1.2vw, 8px)', marginBottom: '1px' }}>Efficiency</p>
-            <p style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontWeight: 'bold', color: '#facc15', lineHeight: '1' }}>
-              {liveData.efficiency.toFixed(1)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>%</span>
-            </p>
-          </div>
-
-          {/* RUL */}
-          <div style={{ textAlign: 'center', padding: '4px', background: 'rgba(0, 255, 204, 0.05)', borderRadius: '6px', border: '1px solid rgba(0, 255, 204, 0.2)' }}>
-            <Clock size={16} style={{ color: '#00ffcc', marginBottom: '2px' }} />
-            <p style={{ color: '#9ca3af', fontSize: 'clamp(7px, 1.2vw, 8px)', marginBottom: '1px' }}>RUL</p>
-            <p style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontWeight: 'bold', color: '#00ffcc', lineHeight: '1' }}>
-              {Math.floor(liveData.rul)}<span style={{ fontSize: '0.5em', color: '#9ca3af' }}>C</span>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 메인 차트 섹션 - Ultra Compact */}
-      <div className="main-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '4px', marginBottom: '4px' }}>
-        {/* 실시간 4파라미터 모니터링 */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '8px',
-          padding: '8px',
-          border: '1px solid rgba(0, 255, 204, 0.3)',
-        }}>
-          <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 14px)', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Activity size={14} style={{ color: '#00ffcc' }} />
-            실시간 ESS 파라미터 모니터링
-          </h2>
-          <ResponsiveContainer width="100%" height={80}>
-            <LineChart data={realtimeData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
-              <XAxis dataKey="time" stroke="#64748b" style={{ fontSize: '8px' }} />
-              <YAxis yAxisId="left" stroke="#facc15" style={{ fontSize: '8px' }} />
-              <YAxis yAxisId="right" orientation="right" stroke="#00ffcc" style={{ fontSize: '8px' }} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#0f1f3a', 
-                  border: '1px solid #00ffcc',
-                  borderRadius: '8px',
-                  fontSize: '11px'
-                }} 
-              />
-              <Line yAxisId="left" type="monotone" dataKey="temperature" stroke="#facc15" strokeWidth={2} dot={false} name="온도(°C)" />
-              <Line yAxisId="right" type="monotone" dataKey="voltage" stroke="#00ffcc" strokeWidth={2} dot={false} name="전압(V)" />
-              <Line yAxisId="right" type="monotone" dataKey="current" stroke="#00ff88" strokeWidth={2} dot={false} name="전류(A)" />
-              <Line yAxisId="left" type="monotone" dataKey="power" stroke="#ff6b9d" strokeWidth={2} dot={false} name="전력(kW)" />
-            </LineChart>
-          </ResponsiveContainer>
-          <div className="param-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))', gap: '8px', marginTop: '12px' }}>
-            <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '8px', borderRadius: '6px', textAlign: 'center' }}>
-              <p style={{ color: '#facc15', fontSize: 'clamp(14px, 3vw, 20px)', fontWeight: 'bold' }}>{liveData.temperature.toFixed(1)}°C</p>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)' }}>온도</p>
-            </div>
-            <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '8px', borderRadius: '6px', textAlign: 'center' }}>
-              <p style={{ color: '#00ffcc', fontSize: 'clamp(14px, 3vw, 20px)', fontWeight: 'bold' }}>{liveData.voltage.toFixed(2)}V</p>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)' }}>전압</p>
-            </div>
-            <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '8px', borderRadius: '6px', textAlign: 'center' }}>
-              <p style={{ color: '#00ff88', fontSize: 'clamp(14px, 3vw, 20px)', fontWeight: 'bold' }}>{liveData.current.toFixed(1)}A</p>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)' }}>전류</p>
-            </div>
-            <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '8px', borderRadius: '6px', textAlign: 'center' }}>
-              <p style={{ color: '#ff6b9d', fontSize: 'clamp(14px, 3vw, 20px)', fontWeight: 'bold' }}>{liveData.power.toFixed(2)}kW</p>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 10px)' }}>전력</p>
-            </div>
-          </div>
-        </div>
-
-        {/* AI 진단 로그 */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '8px',
-          padding: '8px',
-          border: '1px solid rgba(0, 255, 204, 0.3)',
-        }}>
-          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <AlertTriangle size={14} style={{ color: '#00ffcc' }} />
-            ESS AI 진단
-          </h2>
-          <div style={{ maxHeight: '80px', overflowY: 'auto', paddingRight: '4px' }}>
-            {aiLogs.map((log) => (
-              <div 
-                key={log.id}
-                style={{
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  borderLeft: `3px solid ${
-                    log.level === 'warning' ? '#facc15' : 
-                    log.level === 'success' ? '#00ff88' : 
-                    '#00ffcc'
-                  }`,
-                  padding: '6px',
-                  borderRadius: '0 4px 4px 0',
-                  marginBottom: '4px',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', alignItems: 'center', flexWrap: 'wrap', gap: '4px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontSize: '14px' }}>{log.icon}</span>
-                    <span style={{ fontSize: 'clamp(9px, 1.8vw, 10px)', color: '#64748b', background: '#1a2942', padding: '2px 6px', borderRadius: '4px' }}>
-                      {log.category}
-                    </span>
-                  </div>
-                  <span style={{ fontSize: 'clamp(9px, 1.8vw, 10px)', color: '#64748b' }}>{log.time}</span>
-                </div>
-                <p style={{ fontSize: 'clamp(11px, 2.2vw, 12px)', color: '#d1d5db', lineHeight: '1.4' }}>{log.message}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* 셀 전압 분포 & 온도 분포 - Compact Grid View */}
-      <div className="distribution-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px', marginBottom: '12px' }}>
-        {/* 셀 전압 분포 */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '8px',
-          padding: '8px',
-          border: '1px solid rgba(0, 255, 204, 0.3)',
-        }}>
-          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Grid size={14} style={{ color: '#00ffcc' }} />
-            ESS 셀 전압 분포 (16 Cells)
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
-            {cellVoltages.map((cell, index) => (
-              <div key={`cell-${index}`} style={{
-                background: 'rgba(0, 0, 0, 0.3)',
-                borderRadius: '8px',
-                padding: '10px 8px',
-                textAlign: 'center',
-                border: `2px solid ${cell.status === 'normal' ? '#00ff88' : '#facc15'}`,
-                position: 'relative',
-                overflow: 'hidden'
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  height: `${((cell.voltage - 3.5) / 0.6) * 100}%`,
-                  background: cell.status === 'normal' ? 'rgba(0, 255, 136, 0.2)' : 'rgba(250, 204, 21, 0.2)',
-                  transition: 'height 0.5s'
-                }}></div>
-                <p style={{ fontSize: 'clamp(9px, 1.8vw, 10px)', color: '#9ca3af', marginBottom: '4px', position: 'relative', zIndex: 1 }}>셀{index + 1}</p>
-                <p style={{ fontSize: 'clamp(14px, 2.8vw, 16px)', fontWeight: 'bold', color: cell.status === 'normal' ? '#00ff88' : '#facc15', position: 'relative', zIndex: 1 }}>
-                  {cell.voltage.toFixed(2)}
-                </p>
-                <p style={{ fontSize: 'clamp(8px, 1.6vw, 9px)', color: '#9ca3af', position: 'relative', zIndex: 1 }}>V</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 온도 분포 */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '8px',
-          padding: '8px',
-          border: '1px solid rgba(0, 255, 204, 0.3)',
-        }}>
-          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Thermometer size={14} style={{ color: '#facc15' }} />
-            온도 센서 분포 (8 Sensors)
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
-            {temperatureDistribution.map((sensor, index) => {
-              const tempColor = sensor.temp < 40 ? '#00ff88' : sensor.temp < 42 ? '#facc15' : '#ff6b9d';
-              const tempPercent = ((sensor.temp - 30) / 15) * 100;
-              return (
-                <div key={`temp-${index}`} style={{
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  borderRadius: '8px',
-                  padding: '10px 8px',
-                  textAlign: 'center',
-                  border: `2px solid ${tempColor}`,
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}>
-                  <div style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: `${tempPercent}%`,
-                    background: tempColor === '#00ff88' ? 'rgba(0, 255, 136, 0.2)' : tempColor === '#facc15' ? 'rgba(250, 204, 21, 0.2)' : 'rgba(255, 107, 157, 0.2)',
-                    transition: 'height 0.5s'
-                  }}></div>
-                  <p style={{ fontSize: 'clamp(9px, 1.8vw, 10px)', color: '#9ca3af', marginBottom: '4px', position: 'relative', zIndex: 1 }}>{sensor.sensor}</p>
-                  <p style={{ fontSize: 'clamp(14px, 2.8vw, 16px)', fontWeight: 'bold', color: tempColor, position: 'relative', zIndex: 1 }}>
-                    {sensor.temp.toFixed(1)}
-                  </p>
-                  <p style={{ fontSize: 'clamp(8px, 1.6vw, 9px)', color: '#9ca3af', position: 'relative', zIndex: 1 }}>°C</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* 충방전 사이클 & AI 예측 - Responsive */}
-      <div className="cycle-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px', marginBottom: '12px' }}>
-        {/* 충방전 사이클 히스토리 */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '8px',
-          padding: '8px',
-          border: '1px solid rgba(0, 255, 204, 0.3)',
-        }}>
-          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <BarChart3 size={14} style={{ color: '#00ffcc' }} />
-            24시간 충방전 사이클
-          </h2>
-          <ResponsiveContainer width="100%" height={80}>
-            <BarChart data={cycleHistory}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
-              <XAxis dataKey="hour" stroke="#64748b" style={{ fontSize: '9px' }} />
-              <YAxis stroke="#64748b" style={{ fontSize: '8px' }} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#0f1f3a', 
-                  border: '1px solid #00ffcc',
-                  borderRadius: '8px',
-                  fontSize: '11px'
-                }} 
-              />
-              <Bar dataKey="charge" fill="#00ffcc" radius={[4, 4, 0, 0]} name="충전(kWh)" />
-              <Bar dataKey="discharge" fill="#ff6b9d" radius={[4, 4, 0, 0]} name="방전(kWh)" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* AI 예측 수명 곡선 */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '8px',
-          padding: '8px',
-          border: '1px solid rgba(0, 255, 204, 0.3)',
-        }}>
-          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <TrendingUp size={14} style={{ color: '#00ffcc' }} />
-            AI 기반 수명 예측 곡선
-          </h2>
-          <ResponsiveContainer width="100%" height={80}>
-            <AreaChart data={lifeCurveData}>
-              <defs>
-                <linearGradient id="colorPredicted" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#00ffcc" stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor="#00ffcc" stopOpacity={0}/>
-                </linearGradient>
-                <linearGradient id="colorActual" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#00ff88" stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor="#00ff88" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
-              <XAxis dataKey="month" stroke="#64748b" style={{ fontSize: '9px' }} />
-              <YAxis stroke="#64748b" style={{ fontSize: '8px' }} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#0f1f3a', 
-                  border: '1px solid #00ffcc',
-                  borderRadius: '8px',
-                  fontSize: '11px'
-                }} 
-              />
-              <Line type="monotone" dataKey="threshold" stroke="#ff6b9d" strokeWidth={2} strokeDasharray="5 5" name="임계값(80%)" dot={false} />
-              <Area type="monotone" dataKey="predicted" stroke="#00ffcc" strokeWidth={2} fillOpacity={1} fill="url(#colorPredicted)" name="AI 예측" />
-              <Area type="monotone" dataKey="actual" stroke="#00ff88" strokeWidth={2} fillOpacity={1} fill="url(#colorActual)" name="실제 성능" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* 새로운 디테일 섹션 1: 전력 흐름 & 셀 밸런싱 - Responsive */}
-      <div className="power-balance-section" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '12px', marginBottom: '12px' }}>
-        {/* 실시간 전력 흐름 */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '10px',
-          padding: '12px',
-          border: '1px solid rgba(0, 255, 204, 0.3)',
-        }}>
-          <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Waves size={14} style={{ color: '#00ffcc' }} />
-            실시간 전력 흐름
-          </h2>
-          <div className="power-flow-container" style={{ 
-            display: 'flex', 
-            flexDirection: 'row', 
-            alignItems: 'center', 
-            justifyContent: 'space-around',
-            gap: '20px',
-            minHeight: '200px'
-          }}>
-            {/* Grid */}
-            <div className="power-node" style={{ 
-              flex: '0 0 auto',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              <div style={{
-                width: '80px',
-                height: '80px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, rgba(0, 255, 204, 0.2), rgba(0, 255, 204, 0.05))',
-                border: '2px solid #00ffcc',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 0 20px rgba(0, 255, 204, 0.3)',
-                position: 'relative'
-              }}>
-                <Grid size={36} style={{ color: '#00ffcc' }} />
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)', marginBottom: '4px' }}>Grid</p>
-                <p style={{ color: '#00ffcc', fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 'bold' }}>
-                  {powerFlow.grid_power.toFixed(1)} kW
-                </p>
               </div>
             </div>
             
-            {/* 화살표 */}
-            <div className="power-arrow" style={{ 
-              flex: '0 0 auto',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              {powerFlow.mode === 'charging' && (
-                <>
-                  <ArrowDownCircle size={32} style={{ color: '#00ff88', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                  <span style={{ 
-                    color: '#00ff88', 
-                    fontSize: 'clamp(10px, 2vw, 12px)', 
-                    fontWeight: '600',
-                    background: 'rgba(0, 255, 136, 0.1)',
-                    padding: '4px 8px',
-                    borderRadius: '4px'
-                  }}>
-                    충전 중
-                  </span>
-                </>
-              )}
-              {powerFlow.mode === 'discharging' && (
-                <>
-                  <ArrowUpCircle size={32} style={{ color: '#ff6b9d', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                  <span style={{ 
-                    color: '#ff6b9d', 
-                    fontSize: 'clamp(10px, 2vw, 12px)', 
-                    fontWeight: '600',
-                    background: 'rgba(255, 107, 157, 0.1)',
-                    padding: '4px 8px',
-                    borderRadius: '4px'
-                  }}>
-                    방전 중
-                  </span>
-                </>
-              )}
-              {powerFlow.mode === 'idle' && (
-                <>
-                  <Activity size={32} style={{ color: '#facc15', animation: 'pulse 2s ease-in-out infinite' }} />
-                  <span style={{ 
-                    color: '#facc15', 
-                    fontSize: 'clamp(10px, 2vw, 12px)', 
-                    fontWeight: '600',
-                    background: 'rgba(250, 204, 21, 0.1)',
-                    padding: '4px 8px',
-                    borderRadius: '4px'
-                  }}>
-                    대기
-                  </span>
-                </>
-              )}
-            </div>
-
-            {/* ESS Battery */}
-            <div className="power-node" style={{ 
-              flex: '0 0 auto',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              <div style={{ 
-                width: '100px', 
-                height: '100px',
-                borderRadius: '16px',
-                background: 'linear-gradient(135deg, rgba(0, 255, 204, 0.2), rgba(0, 255, 136, 0.2))',
-                border: '3px solid #00ffcc',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 0 30px rgba(0, 255, 204, 0.4)',
-                position: 'relative',
-                overflow: 'hidden'
-              }}>
-                {/* Battery level indicator */}
-                <div style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  height: `${liveData.soc}%`,
-                  background: 'linear-gradient(to top, rgba(0, 255, 204, 0.3), rgba(0, 255, 136, 0.1))',
-                  transition: 'height 1s ease'
-                }}></div>
-                <Battery size={40} style={{ color: '#00ffcc', marginBottom: '4px', position: 'relative', zIndex: 1 }} />
-                <span style={{ 
-                  color: '#00ffcc', 
-                  fontSize: 'clamp(11px, 2.2vw, 13px)', 
-                  fontWeight: 'bold',
-                  position: 'relative',
-                  zIndex: 1
-                }}>
-                  {liveData.soc.toFixed(0)}%
-                </span>
+            <div style={{ textAlign: 'center', padding: '16px', background: '#fff7e6', borderRadius: '6px' }}>
+              <div style={{ fontSize: '12px', color: '#faad14', marginBottom: '8px', fontWeight: '500' }}>
+                총 주행거리
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)', marginBottom: '4px' }}>ESS Battery</p>
-                <p style={{ 
-                  color: powerFlow.mode === 'charging' ? '#00ff88' : powerFlow.mode === 'discharging' ? '#ff6b9d' : '#facc15',
-                  fontSize: 'clamp(16px, 3vw, 20px)', 
-                  fontWeight: 'bold' 
-                }}>
-                  {powerFlow.rate.toFixed(1)} kW
-                </p>
+              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#faad14' }}>
+                {liveData.totalDistance.toLocaleString()}
+                <span style={{ fontSize: '14px', color: '#8c8c8c', marginLeft: '4px' }}>km</span>
               </div>
-            </div>
-
-            {/* 화살표 2 */}
-            <div className="power-arrow" style={{ 
-              flex: '0 0 auto',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              <ArrowDownCircle size={32} style={{ color: '#ff6b9d', animation: 'pulse 1.5s ease-in-out infinite' }} />
-              <span style={{ 
-                color: '#ff6b9d', 
-                fontSize: 'clamp(10px, 2vw, 12px)', 
-                fontWeight: '600',
-                background: 'rgba(255, 107, 157, 0.1)',
-                padding: '4px 8px',
-                borderRadius: '4px'
-              }}>
-                공급
-              </span>
-            </div>
-            
-            {/* Load */}
-            <div className="power-node" style={{ 
-              flex: '0 0 auto',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              <div style={{
-                width: '80px',
-                height: '80px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, rgba(255, 107, 157, 0.2), rgba(255, 107, 157, 0.05))',
-                border: '2px solid #ff6b9d',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 0 20px rgba(255, 107, 157, 0.3)',
-                position: 'relative'
-              }}>
-                <Zap size={36} style={{ color: '#ff6b9d' }} />
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)', marginBottom: '4px' }}>Load</p>
-                <p style={{ color: '#ff6b9d', fontSize: 'clamp(16px, 3vw, 20px)', fontWeight: 'bold' }}>
-                  {powerFlow.load_power.toFixed(1)} kW
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 셀 밸런싱 상태 */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '8px',
-          padding: '8px',
-          border: '1px solid rgba(0, 255, 204, 0.3)',
-        }}>
-          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Gauge size={14} style={{ color: '#00ffcc' }} />
-            셀 밸런싱 상세 분석 (16 Cells)
-          </h2>
-          <ResponsiveContainer width="100%" height={80}>
-            <ComposedChart data={cellBalancingData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
-              <XAxis dataKey="cell" stroke="#64748b" style={{ fontSize: '9px' }} />
-              <YAxis yAxisId="left" stroke="#64748b" style={{ fontSize: '9px' }} />
-              <YAxis yAxisId="right" orientation="right" stroke="#facc15" style={{ fontSize: '9px' }} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#0f1f3a', 
-                  border: '1px solid #00ffcc',
-                  borderRadius: '8px',
-                  fontSize: '11px'
-                }} 
-              />
-              <Bar yAxisId="left" dataKey="voltage" radius={[4, 4, 0, 0]} name="전압">
-                {cellBalancingData.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={
-                      entry.status === 'excellent' ? '#00ff88' : 
-                      entry.status === 'good' ? '#00ffcc' : 
-                      '#facc15'
-                    } 
-                  />
-                ))}
-              </Bar>
-              <Line yAxisId="right" type="monotone" dataKey="deviation" stroke="#facc15" strokeWidth={2} dot={{ r: 3, fill: '#facc15' }} name="전압 편차" />
-            </ComposedChart>
-          </ResponsiveContainer>
-          <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '10px', fontSize: 'clamp(9px, 1.8vw, 11px)', flexWrap: 'wrap', gap: '6px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <div style={{ width: '10px', height: '10px', background: '#00ff88', borderRadius: '2px' }}></div>
-              <span style={{ color: '#9ca3af' }}>우수</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <div style={{ width: '10px', height: '10px', background: '#00ffcc', borderRadius: '2px' }}></div>
-              <span style={{ color: '#9ca3af' }}>양호</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <div style={{ width: '10px', height: '10px', background: '#facc15', borderRadius: '2px' }}></div>
-              <span style={{ color: '#9ca3af' }}>주의</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 새로운 디테일 섹션 2: SOH/SOC 트렌드 & 에너지 효율 - Responsive */}
-      <div className="trend-charts" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px', marginBottom: '12px' }}>
-        {/* SOH/SOC 히스토리 트렌드 */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '8px',
-          padding: '8px',
-          border: '1px solid rgba(0, 255, 204, 0.3)',
-        }}>
-          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <TrendingUp size={14} style={{ color: '#00ffcc' }} />
-            SOH/SOC 7일 트렌드 분석
-          </h2>
-          <ResponsiveContainer width="100%" height={80}>
-            <ComposedChart data={healthTrend}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
-              <XAxis dataKey="day" stroke="#64748b" style={{ fontSize: '9px' }} />
-              <YAxis yAxisId="left" stroke="#64748b" style={{ fontSize: '9px' }} domain={[70, 100]} />
-              <YAxis yAxisId="right" orientation="right" stroke="#9ca3af" style={{ fontSize: '9px' }} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#0f1f3a', 
-                  border: '1px solid #00ffcc',
-                  borderRadius: '8px',
-                  fontSize: '11px'
-                }} 
-              />
-              <Area yAxisId="left" type="monotone" dataKey="soc_avg" fill="#00ffcc" fillOpacity={0.2} stroke="#00ffcc" strokeWidth={2} name="평균 SOC (%)" />
-              <Line yAxisId="left" type="monotone" dataKey="soh" stroke="#00ff88" strokeWidth={2} dot={{ r: 4, fill: '#00ff88' }} name="SOH (%)" />
-              <Bar yAxisId="right" dataKey="cycles" fill="#1a2942" radius={[4, 4, 0, 0]} name="사이클 수" />
-            </ComposedChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* 에너지 효율 트렌드 */}
-        <div style={{
-          background: '#0f1f3a',
-          borderRadius: '8px',
-          padding: '8px',
-          border: '1px solid rgba(0, 255, 204, 0.3)',
-        }}>
-          <h2 style={{ fontSize: 'clamp(11px, 2.2vw, 13px)', fontWeight: 'bold', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Activity size={14} style={{ color: '#facc15' }} />
-            24시간 에너지 효율 분석
-          </h2>
-          <ResponsiveContainer width="100%" height={80}>
-            <LineChart data={efficiencyTrend}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
-              <XAxis dataKey="hour" stroke="#64748b" style={{ fontSize: '9px' }} />
-              <YAxis stroke="#64748b" style={{ fontSize: '9px' }} domain={[80, 100]} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#0f1f3a', 
-                  border: '1px solid #00ffcc',
-                  borderRadius: '8px',
-                  fontSize: '11px'
-                }} 
-              />
-              <Line type="monotone" dataKey="charge_eff" stroke="#00ff88" strokeWidth={2} dot={false} name="충전 효율 (%)" />
-              <Line type="monotone" dataKey="discharge_eff" stroke="#00ffcc" strokeWidth={2} dot={false} name="방전 효율 (%)" />
-              <Line type="monotone" dataKey="roundtrip_eff" stroke="#facc15" strokeWidth={2} strokeDasharray="5 5" dot={false} name="왕복 효율 (%)" />
-            </LineChart>
-          </ResponsiveContainer>
-          <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '10px', fontSize: 'clamp(9px, 1.8vw, 11px)', flexWrap: 'wrap', gap: '6px' }}>
-            <div style={{ textAlign: 'center' }}>
-              <p style={{ color: '#00ff88', fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold' }}>94.2%</p>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(8px, 1.6vw, 10px)' }}>평균 충전</p>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <p style={{ color: '#00ffcc', fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold' }}>92.8%</p>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(8px, 1.6vw, 10px)' }}>평균 방전</p>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <p style={{ color: '#facc15', fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold' }}>87.4%</p>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(8px, 1.6vw, 10px)' }}>왕복 효율</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 새로운 디테일 섹션 3: 셀 온도 히트맵 - Responsive */}
-      <div style={{
-        background: '#0f1f3a',
-        borderRadius: '10px',
-        padding: '12px',
-        border: '1px solid rgba(250, 204, 21, 0.3)',
-        marginBottom: '16px'
-      }}>
-        <h2 style={{ fontSize: 'clamp(14px, 3vw, 18px)', fontWeight: 'bold', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Thermometer size={14} style={{ color: '#facc15' }} />
-          배터리 셀 온도 분포 히트맵 (4x4 Grid)
-        </h2>
-        <div className="heatmap-container" style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
-          <ResponsiveContainer width="100%" height={80}>
-            <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a2942" />
-              <XAxis type="number" dataKey="x" domain={[-0.5, 3.5]} ticks={[0, 1, 2, 3]} stroke="#64748b" style={{ fontSize: '8px' }} />
-              <YAxis type="number" dataKey="y" domain={[-0.5, 3.5]} ticks={[0, 1, 2, 3]} stroke="#64748b" style={{ fontSize: '8px' }} reversed />
-              <ZAxis type="number" dataKey="temp" range={[300, 700]} />
-              <Tooltip 
-                cursor={{ strokeDasharray: '3 3' }}
-                contentStyle={{ 
-                  backgroundColor: '#0f1f3a', 
-                  border: '1px solid #facc15',
-                  borderRadius: '8px',
-                  fontSize: '11px'
-                }}
-                formatter={(value, name) => {
-                  if (name === 'temp') return [`${value.toFixed(1)}°C`, '온도'];
-                  return value;
-                }}
-              />
-              <Scatter data={cellTempHeatmap} shape="square">
-                {cellTempHeatmap.map((entry, index) => {
-                  let fillColor = '#00ff88'; // 정상 (< 38°C)
-                  if (entry.temp >= 42) fillColor = '#ff6b9d'; // 경고
-                  else if (entry.temp >= 40) fillColor = '#facc15'; // 주의
-                  else if (entry.temp >= 38) fillColor = '#00ffcc'; // 양호
-                  
-                  return <Cell key={`cell-${index}`} fill={fillColor} />;
-                })}
-              </Scatter>
-            </ScatterChart>
-          </ResponsiveContainer>
-          <div className="legend-stats" style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '4px',
-            width: '100%'
-          }}>
-            <div>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)', marginBottom: '10px', fontWeight: '600' }}>온도 범례</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div style={{ width: '20px', height: '20px', background: '#00ff88', borderRadius: '4px', flexShrink: 0 }}></div>
-                  <span style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 11px)' }}>정상 (&lt; 38°C)</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div style={{ width: '20px', height: '20px', background: '#00ffcc', borderRadius: '4px', flexShrink: 0 }}></div>
-                  <span style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 11px)' }}>양호 (38-40°C)</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div style={{ width: '20px', height: '20px', background: '#facc15', borderRadius: '4px', flexShrink: 0 }}></div>
-                  <span style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 11px)' }}>주의 (40-42°C)</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div style={{ width: '20px', height: '20px', background: '#ff6b9d', borderRadius: '4px', flexShrink: 0 }}></div>
-                  <span style={{ color: '#9ca3af', fontSize: 'clamp(9px, 1.8vw, 11px)' }}>경고 (≥ 42°C)</span>
-                </div>
-              </div>
-            </div>
-            <div style={{ padding: '12px', background: 'rgba(0, 0, 0, 0.3)', borderRadius: '8px' }}>
-              <p style={{ color: '#9ca3af', fontSize: 'clamp(10px, 2vw, 12px)', marginBottom: '8px' }}>온도 통계</p>
-              <p style={{ color: '#00ffcc', fontSize: 'clamp(14px, 3vw, 16px)', fontWeight: 'bold' }}>
-                Avg: {(cellTempHeatmap.reduce((sum, cell) => sum + cell.temp, 0) / cellTempHeatmap.length).toFixed(1)}°C
-              </p>
-              <p style={{ color: '#ff6b9d', fontSize: 'clamp(12px, 2.5vw, 13px)', marginTop: '4px' }}>
-                Max: {Math.max(...cellTempHeatmap.map(c => c.temp)).toFixed(1)}°C
-              </p>
-              <p style={{ color: '#00ff88', fontSize: 'clamp(12px, 2.5vw, 13px)', marginTop: '2px' }}>
-                Min: {Math.min(...cellTempHeatmap.map(c => c.temp)).toFixed(1)}°C
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-        
-        /* 스크롤바 스타일링 */
-        ::-webkit-scrollbar {
-          width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-          background: #1a2942;
-          border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb {
-          background: #00ffcc;
-          border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-          background: #00ff88;
-        }
-        
-        /* 모바일 반응형 */
-        @media (max-width: 768px) {
-          .header-container {
-            flex-direction: column !important;
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
           }
-          .status-badge {
-            align-self: flex-start;
+          
+          div[style*="background: #fff"] {
+            animation: fadeIn 0.3s ease-out;
           }
-          .battery-icon {
-            width: 28px !important;
-            height: 28px !important;
-          }
-          .metrics-grid {
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
-            gap: 10px !important;
-          }
-          .main-charts, .distribution-charts, .cycle-charts, .trend-charts {
-            grid-template-columns: 1fr !important;
-          }
-          .power-balance-section {
-            grid-template-columns: 1fr !important;
-          }
-          .power-flow-container {
-            flex-direction: column !important;
-            gap: 12px !important;
-            min-height: auto !important;
-          }
-          .power-arrow {
-            transform: rotate(90deg);
-          }
-          .param-stats {
-            grid-template-columns: repeat(2, 1fr) !important;
-          }
-          .heatmap-container .legend-stats {
-            grid-template-columns: 1fr !important;
-          }
-        }
-        
-        @media (max-width: 480px) {
-          .metrics-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .param-stats {
-            grid-template-columns: 1fr !important;
-          }
-        }
-        
-        /* 데스크톱 전력 흐름 최적화 */
-        @media (min-width: 769px) {
-          .power-balance-section {
-            grid-template-columns: 1fr 1.5fr !important;
-          }
-        }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };
