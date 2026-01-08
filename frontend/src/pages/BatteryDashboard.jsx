@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Zap, Clock, AlertTriangle, TrendingUp, Battery, Thermometer, Grid as GridIcon, Power, Gauge } from 'lucide-react';
+import { Activity, Zap, Clock, AlertTriangle, TrendingUp, Battery, Thermometer, Grid as GridIcon, Power, Gauge, ChevronDown, ChevronUp } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadialBarChart, RadialBar, Cell } from 'recharts';
 
 const BatteryDashboard = () => {
   const [time, setTime] = useState(new Date());
+  const [showAdvancedDiagnostics, setShowAdvancedDiagnostics] = useState(false);
   const [liveData, setLiveData] = useState({
     soh: 97.1,
     soc: 99.0,
@@ -632,19 +633,63 @@ const BatteryDashboard = () => {
         </div>
       </div>
 
-      {/* 심화 진단 섹션 */}
+      {/* 심화 진단 섹션 토글 버튼 */}
       <div style={{ marginTop: '20px' }}>
-        <h2 style={{ 
-          fontSize: '18px', 
-          fontWeight: '700', 
-          color: '#262626', 
-          marginBottom: '16px',
-          paddingBottom: '12px',
-          borderBottom: '2px solid #1890ff'
-        }}>
-          🔬 심화 진단 및 운영 지표
-        </h2>
+        <button
+          onClick={() => setShowAdvancedDiagnostics(!showAdvancedDiagnostics)}
+          style={{
+            width: '100%',
+            padding: '16px 24px',
+            background: showAdvancedDiagnostics ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #1890ff 0%, #096dd9 100%)',
+            border: 'none',
+            borderRadius: '8px',
+            color: '#fff',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '24px' }}>🔬</span>
+            <span>심화 진단 및 운영 지표</span>
+            <span style={{ 
+              background: 'rgba(255,255,255,0.2)', 
+              padding: '4px 12px', 
+              borderRadius: '12px',
+              fontSize: '12px',
+              fontWeight: '500'
+            }}>
+              {showAdvancedDiagnostics ? '접기' : '펼치기'}
+            </span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '12px', opacity: 0.9 }}>
+              4개 카테고리 · 20개 지표
+            </span>
+            {showAdvancedDiagnostics ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+          </div>
+        </button>
       </div>
+
+      {/* 심화 진단 섹션 내용 (토글) */}
+      {showAdvancedDiagnostics && (
+        <div style={{
+          marginTop: '20px',
+          animation: 'slideDown 0.3s ease-out'
+        }}>
 
       {/* 1. 안전 및 리스크 관리 */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '20px' }}>
@@ -1251,12 +1296,28 @@ const BatteryDashboard = () => {
           </div>
         </div>
       </div>
+      
+      </div>
+      )}
 
       <style>
         {`
           @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+          }
+          
+          @keyframes slideDown {
+            from { 
+              opacity: 0; 
+              transform: translateY(-20px);
+              max-height: 0;
+            }
+            to { 
+              opacity: 1; 
+              transform: translateY(0);
+              max-height: 5000px;
+            }
           }
           
           div[style*="background: #fff"] {
