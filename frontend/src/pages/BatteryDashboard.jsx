@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Zap, Clock, AlertTriangle, TrendingUp, Cpu, Battery, Thermometer, Grid as GridIcon, BarChart3, Waves, ArrowUpCircle, ArrowDownCircle, Gauge, Power } from 'lucide-react';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadialBarChart, RadialBar, Legend } from 'recharts';
+import { Activity, Zap, Clock, AlertTriangle, TrendingUp, Battery, Thermometer, Grid as GridIcon, Power, Gauge } from 'lucide-react';
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadialBarChart, RadialBar } from 'recharts';
 
 const BatteryDashboard = () => {
   const [time, setTime] = useState(new Date());
   const [liveData, setLiveData] = useState({
     soh: 97.1,
-    evSoh: 98.5,
+    soc: 99.0,
     sop: 98.7,
     sob: 100.0,
-    soc: 99.0,
     temperature: 25,
     voltage: 406.7,
     current: 1.5,
-    power: 2816,
+    power: 610,
     chargeEnergy: 1018.7,
     dischargeEnergy: 998.8,
-    efficiency: 8.7,
-    cycleCount: 4955753,
-    totalDistance: 17429,
+    efficiency: 97.3,
+    cycleCount: 4955,
     maxTemp: 24,
     minTemp: 23,
+    capacity: 2500, // kWh
+    remainingCapacity: 2475, // kWh
   });
 
   // 실시간 데이터 애니메이션
@@ -30,22 +30,22 @@ const BatteryDashboard = () => {
       setLiveData(prev => ({
         ...prev,
         soh: Math.max(95, Math.min(99, prev.soh + (Math.random() - 0.5) * 0.2)),
-        evSoh: Math.max(96, Math.min(99.5, prev.evSoh + (Math.random() - 0.5) * 0.2)),
         soc: Math.max(95, Math.min(100, prev.soc + (Math.random() - 0.5) * 0.5)),
         temperature: Math.max(23, Math.min(27, prev.temperature + (Math.random() - 0.5) * 0.3)),
         voltage: Math.max(400, Math.min(410, prev.voltage + (Math.random() - 0.5) * 2)),
         current: Math.max(1, Math.min(2, prev.current + (Math.random() - 0.5) * 0.1)),
+        power: Math.max(600, Math.min(620, prev.power + (Math.random() - 0.5) * 5)),
       }));
     }, 2000);
 
     return () => clearInterval(timer);
   }, []);
 
-  // 전력 수명 예측 데이터 (7일)
+  // ESS 수명 예측 데이터 (7일)
   const healthTrendData = Array.from({ length: 7 }, (_, i) => ({
     day: `${i + 1}일`,
-    실제운행: 97 - i * 0.3 + Math.random() * 0.5,
-    시뮬레이션: 96.5 - i * 0.25 + Math.random() * 0.5,
+    실제수명: 97 - i * 0.3 + Math.random() * 0.5,
+    예측수명: 96.5 - i * 0.25 + Math.random() * 0.5,
   }));
 
   // 배터리 정보 데이터
@@ -53,11 +53,11 @@ const BatteryDashboard = () => {
     { icon: '🌡️', label: '배터리 온도', value: `${liveData.temperature}`, unit: '℃', color: '#1890ff' },
     { icon: '⚡', label: '셀 전압', value: `${liveData.voltage.toFixed(1)}`, unit: 'V', color: '#52c41a' },
     { icon: '🔌', label: '전류', value: `${liveData.current.toFixed(1)}`, unit: 'A', color: '#faad14' },
-    { icon: '💡', label: '출력', value: `${liveData.power}`, unit: 'kΩ', color: '#f5222d' },
+    { icon: '💡', label: '출력', value: `${liveData.power}`, unit: 'kW', color: '#f5222d' },
   ];
 
-  // 충전 정보
-  const chargeInfo = [
+  // 충방전 정보
+  const energyInfo = [
     { icon: '⬆️', label: '충전량', value: `${liveData.chargeEnergy.toFixed(1)}`, unit: 'kWh', color: '#13c2c2' },
     { icon: '⬇️', label: '방전량', value: `${liveData.dischargeEnergy.toFixed(1)}`, unit: 'kWh', color: '#722ed1' },
   ];
@@ -90,7 +90,7 @@ const BatteryDashboard = () => {
       }}>
         <div>
           <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff', margin: 0 }}>
-            전력 수명 예측
+            ESS 수명 예측
           </h1>
         </div>
         <div style={{ 
@@ -119,7 +119,7 @@ const BatteryDashboard = () => {
       {/* 메인 대시보드 */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
         
-        {/* 좌측: 전력 수명 예측 차트 */}
+        {/* 좌측: ESS 수명 예측 차트 */}
         <div style={{
           background: '#fff',
           borderRadius: '8px',
@@ -128,16 +128,16 @@ const BatteryDashboard = () => {
           gridColumn: 'span 2'
         }}>
           <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#262626', marginBottom: '20px' }}>
-            전력 수명 예측
+            ESS 수명 예측
           </h2>
           <div style={{ display: 'flex', gap: '16px', marginBottom: '12px', fontSize: '13px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ width: '12px', height: '12px', background: '#1890ff', borderRadius: '50%', display: 'inline-block' }}></span>
-              <span style={{ color: '#595959' }}>실제 운행</span>
+              <span style={{ color: '#595959' }}>실제 수명</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ width: '12px', height: '12px', background: '#52c41a', borderRadius: '50%', display: 'inline-block' }}></span>
-              <span style={{ color: '#595959' }}>시뮬 운행</span>
+              <span style={{ color: '#595959' }}>예측 수명</span>
             </div>
           </div>
           <ResponsiveContainer width="100%" height={200}>
@@ -155,14 +155,14 @@ const BatteryDashboard = () => {
               />
               <Line 
                 type="monotone" 
-                dataKey="실제운행" 
+                dataKey="실제수명" 
                 stroke="#1890ff" 
                 strokeWidth={3}
                 dot={{ fill: '#1890ff', r: 4 }}
               />
               <Line 
                 type="monotone" 
-                dataKey="시뮬레이션" 
+                dataKey="예측수명" 
                 stroke="#52c41a" 
                 strokeWidth={3}
                 dot={{ fill: '#52c41a', r: 4 }}
@@ -189,7 +189,7 @@ const BatteryDashboard = () => {
               SOH
             </div>
             <div style={{ fontSize: '11px', color: '#bfbfbf', marginBottom: '12px' }}>
-              ESS수명
+              배터리 건강도
             </div>
             <ResponsiveContainer width="100%" height={120}>
               <RadialBarChart 
@@ -208,7 +208,7 @@ const BatteryDashboard = () => {
             </div>
           </div>
 
-          {/* EV_SOH 게이지 */}
+          {/* SOC 게이지 */}
           <div style={{
             background: '#fff',
             borderRadius: '8px',
@@ -217,16 +217,16 @@ const BatteryDashboard = () => {
             textAlign: 'center'
           }}>
             <div style={{ fontSize: '13px', color: '#8c8c8c', marginBottom: '8px', fontWeight: '500' }}>
-              EV_SOH
+              SOC
             </div>
             <div style={{ fontSize: '11px', color: '#bfbfbf', marginBottom: '12px' }}>
-              EV_단자수명
+              충전 상태
             </div>
             <ResponsiveContainer width="100%" height={120}>
               <RadialBarChart 
                 innerRadius="70%" 
                 outerRadius="100%" 
-                data={createGaugeData(liveData.evSoh, '#52c41a')}
+                data={createGaugeData(liveData.soc, '#52c41a')}
                 startAngle={180}
                 endAngle={0}
               >
@@ -234,7 +234,7 @@ const BatteryDashboard = () => {
               </RadialBarChart>
             </ResponsiveContainer>
             <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#52c41a', marginTop: '-60px' }}>
-              {liveData.evSoh.toFixed(1)}
+              {liveData.soc.toFixed(1)}
               <span style={{ fontSize: '16px', color: '#8c8c8c', marginLeft: '4px' }}>%</span>
             </div>
           </div>
@@ -271,7 +271,7 @@ const BatteryDashboard = () => {
           </div>
         </div>
 
-        {/* 배터리 상태 (중앙 이미지 영역) */}
+        {/* ESS 배터리 상태 */}
         <div style={{
           background: '#fff',
           borderRadius: '8px',
@@ -279,7 +279,7 @@ const BatteryDashboard = () => {
           boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
           textAlign: 'center'
         }}>
-          <div style={{ fontSize: '14px', color: '#8c8c8c', marginBottom: '12px' }}>충전상태</div>
+          <div style={{ fontSize: '14px', color: '#8c8c8c', marginBottom: '12px' }}>ESS 충전상태</div>
           <div style={{
             position: 'relative',
             width: '100%',
@@ -306,17 +306,17 @@ const BatteryDashboard = () => {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '12px' }}>
             <div style={{ textAlign: 'left' }}>
-              <div style={{ color: '#8c8c8c', marginBottom: '4px' }}>🔥 모델 Max 온도</div>
+              <div style={{ color: '#8c8c8c', marginBottom: '4px' }}>🔥 최고 온도</div>
               <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#f5222d' }}>{liveData.maxTemp}°C</div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ color: '#8c8c8c', marginBottom: '4px' }}>❄️ 모델 Min 온도</div>
+              <div style={{ color: '#8c8c8c', marginBottom: '4px' }}>❄️ 최저 온도</div>
               <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#1890ff' }}>{liveData.minTemp}°C</div>
             </div>
           </div>
         </div>
 
-        {/* 배터리 세부 정보 (우측) */}
+        {/* 배터리 세부 상태 */}
         <div style={{
           background: '#fff',
           borderRadius: '8px',
@@ -331,7 +331,7 @@ const BatteryDashboard = () => {
           <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '24px' }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '12px', color: '#8c8c8c', marginBottom: '8px' }}>SOP</div>
-              <div style={{ fontSize: '11px', color: '#bfbfbf', marginBottom: '8px' }}>출력전력</div>
+              <div style={{ fontSize: '11px', color: '#bfbfbf', marginBottom: '8px' }}>출력 전력</div>
               <ResponsiveContainer width={80} height={80}>
                 <RadialBarChart 
                   innerRadius="60%" 
@@ -372,13 +372,13 @@ const BatteryDashboard = () => {
 
           {/* 충방전 정보 */}
           <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '16px' }}>
-            {chargeInfo.map((item, index) => (
+            {energyInfo.map((item, index) => (
               <div key={index} style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '12px 0',
-                borderBottom: index < chargeInfo.length - 1 ? '1px solid #f0f0f0' : 'none'
+                borderBottom: index < energyInfo.length - 1 ? '1px solid #f0f0f0' : 'none'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span style={{ fontSize: '18px' }}>{item.icon}</span>
@@ -401,7 +401,7 @@ const BatteryDashboard = () => {
           boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
         }}>
           <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#262626', marginBottom: '20px' }}>
-            이상상태
+            시스템 상태
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div style={{
@@ -432,7 +432,7 @@ const BatteryDashboard = () => {
           </div>
         </div>
 
-        {/* 통계 정보 */}
+        {/* ESS 운영 통계 */}
         <div style={{
           background: '#fff',
           borderRadius: '8px',
@@ -445,11 +445,11 @@ const BatteryDashboard = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ textAlign: 'center', padding: '16px', background: '#e6f7ff', borderRadius: '6px' }}>
               <div style={{ fontSize: '12px', color: '#1890ff', marginBottom: '8px', fontWeight: '500' }}>
-                효율성
+                시스템 효율
               </div>
               <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#1890ff' }}>
                 {liveData.efficiency}
-                <span style={{ fontSize: '14px', color: '#8c8c8c', marginLeft: '4px' }}>km/kWh</span>
+                <span style={{ fontSize: '14px', color: '#8c8c8c', marginLeft: '4px' }}>%</span>
               </div>
             </div>
             
@@ -464,11 +464,11 @@ const BatteryDashboard = () => {
             
             <div style={{ textAlign: 'center', padding: '16px', background: '#fff7e6', borderRadius: '6px' }}>
               <div style={{ fontSize: '12px', color: '#faad14', marginBottom: '8px', fontWeight: '500' }}>
-                총 주행거리
+                저장 용량
               </div>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#faad14' }}>
-                {liveData.totalDistance.toLocaleString()}
-                <span style={{ fontSize: '14px', color: '#8c8c8c', marginLeft: '4px' }}>km</span>
+              <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#faad14' }}>
+                {liveData.remainingCapacity.toLocaleString()}
+                <span style={{ fontSize: '14px', color: '#8c8c8c', marginLeft: '4px' }}>/ {liveData.capacity} kWh</span>
               </div>
             </div>
           </div>
