@@ -375,6 +375,83 @@ const BatteryDashboard = () => {
               </div>
             ))}
           </div>
+          
+          {/* 운영 통계 - 추가 섹션 */}
+          <div style={{ 
+            marginTop: '20px', 
+            paddingTop: '20px', 
+            borderTop: '1px solid #f0f0f0',
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', 
+            gap: '16px' 
+          }}>
+            {/* 총 사이클 */}
+            <div style={{
+              textAlign: 'center',
+              padding: '16px',
+              background: 'linear-gradient(135deg, #e0f7ff 0%, #d1f0ff 100%)',
+              borderRadius: '6px',
+              border: '1px solid #bae7ff'
+            }}>
+              <div style={{ fontSize: '24px', marginBottom: '8px' }}>🔄</div>
+              <div style={{ fontSize: '12px', color: '#096dd9', marginBottom: '8px' }}>총 사이클</div>
+              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#0050b3' }}>
+                {liveData.cycleCount.toLocaleString()}
+                <span style={{ fontSize: '14px', color: '#8c8c8c', marginLeft: '4px' }}>회</span>
+              </div>
+            </div>
+
+            {/* 시스템 효율 */}
+            <div style={{
+              textAlign: 'center',
+              padding: '16px',
+              background: 'linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%)',
+              borderRadius: '6px',
+              border: '1px solid #91d5ff'
+            }}>
+              <div style={{ fontSize: '24px', marginBottom: '8px' }}>⚡</div>
+              <div style={{ fontSize: '12px', color: '#1890ff', marginBottom: '8px' }}>시스템 효율</div>
+              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#0050b3' }}>
+                {liveData.efficiency.toFixed(1)}
+                <span style={{ fontSize: '14px', color: '#8c8c8c', marginLeft: '4px' }}>%</span>
+              </div>
+            </div>
+
+            {/* 저장 용량 */}
+            <div style={{
+              textAlign: 'center',
+              padding: '16px',
+              background: 'linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%)',
+              borderRadius: '6px',
+              border: '1px solid #b7eb8f'
+            }}>
+              <div style={{ fontSize: '24px', marginBottom: '8px' }}>📦</div>
+              <div style={{ fontSize: '12px', color: '#52c41a', marginBottom: '8px' }}>저장 용량</div>
+              <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#389e0d' }}>
+                {liveData.remainingCapacity.toLocaleString()}
+                <span style={{ fontSize: '12px', color: '#8c8c8c', marginLeft: '2px' }}>/</span>
+                {liveData.capacity.toLocaleString()}
+                <span style={{ fontSize: '12px', color: '#8c8c8c', marginLeft: '4px' }}>kWh</span>
+              </div>
+            </div>
+
+            {/* 온도 범위 */}
+            <div style={{
+              textAlign: 'center',
+              padding: '16px',
+              background: 'linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%)',
+              borderRadius: '6px',
+              border: '1px solid #ffd591'
+            }}>
+              <div style={{ fontSize: '24px', marginBottom: '8px' }}>🌡️</div>
+              <div style={{ fontSize: '12px', color: '#fa8c16', marginBottom: '8px' }}>온도 범위</div>
+              <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#d46b08' }}>
+                {liveData.minTemp.toFixed(1)}°C
+                <span style={{ fontSize: '12px', color: '#8c8c8c', marginLeft: '2px', marginRight: '2px' }}>~</span>
+                {liveData.maxTemp.toFixed(1)}°C
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* ESS 배터리 상태 - 동적 충전 표시 */}
