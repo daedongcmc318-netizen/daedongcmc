@@ -943,7 +943,6 @@ const BatteryDashboard = () => {
           </div>
         </div>
       </div>
-            </div>
           </div>
         )}
 
